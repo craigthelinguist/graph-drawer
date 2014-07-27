@@ -8,6 +8,8 @@ This program lets you draw a graph on the screen. You can select an algorithm, c
 
 This program began as my personal homework-solver. I had two classes that touched on graphing algorithms and found it tedious having to work out by-hand what the solution to a particular instance of the problem might be, so wrote a few programs to do a couple of the common algorithms for me. In July 2014 I brought those programs together and started working on them to make a genuine learning aide.
 
+You may freely copy, edit, and distribute this program per the GPL 3.0 licence: http://www.gnu.org/copyleft/gpl.html
+
 Working On
 ==========
 - Moving cut vertices/articulation points and A* algorithms to the refactored version.
