@@ -10,7 +10,8 @@ This program began as my personal homework-solver. I had two classes that touche
 
 Working On
 ==========
-- Adding cut vertices/articulation points algorithm and A* shortest paths.
+- Moving cut vertices/articulation points and A* algorithms to the refactored version.
+- Moving weighted edges to the refactored version.
 
 Things To Add
 =============
@@ -18,3 +19,6 @@ Things To Add
 - Moar algortihms.
 - Directed edges.
 - Checks that the inputs for each algorithm is valid (e.g.: no performing A* on a graph with negative edges).
+- Checking for lack of solution in the example of algorithms where there may not be one (e.g.: Hamiltonian Cycle, Eulerian Path).
+- Panning the screen! To allow for even bigger graphs.
+- Saving and loading of graphs (particularly to give some useful pre-generated graphs, such as bipartite graphs, which are required for specific algorithms).
