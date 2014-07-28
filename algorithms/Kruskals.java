@@ -18,15 +18,15 @@ public class Kruskals extends Algorithm{
 
 	private List<State> states = new ArrayList<State>();
 	private Graph graph;
-	
+
 	public Kruskals(Graph g){
 		graph = g;
 		solve();
 		this.stateIndex = 0;
 	}
-	
+
 	private void solve(){
-		
+
 		/* Algorithm set up */
 		PriorityQueue<Edge> edges = new PriorityQueue<>(graph.getEdges());
 		Set<Edge> tree = new HashSet<>();
@@ -37,43 +37,43 @@ public class Kruskals extends Algorithm{
 			nodes.add(kruskalNode);
 			mapping.put(node,kruskalNode);
 		}
-		
+
 		/* Add the initial, 'empty' state. */
 		states.add(new State(null,tree,edges));
-		
+
 		/* Algorithm execution */
-		while (!edges.isEmpty()){	
+		while (!edges.isEmpty()){
 			Edge edge = edges.poll();
 			UFNode first = mapping.get(edge.node1);
 			UFNode second = mapping.get(edge.node2);
 			if (union(first,second)) tree.add(edge);
 			states.add(new State(edge,tree,edges));
 		}
-		
+
 		/* Add the final, 'complete' state. */
 		states.add(new State(null,tree,new PriorityQueue<Edge>()));
-		
+
 	}
-	
+
 	@Override
 	public void draw(Graphics g) {
 
 		// get current state and draw unprocessed nodes
 		State state = states.get(stateIndex);
 		graph.drawNodes(g,Color.WHITE);
-		
+
 		// draw spanning tree
 		for (Edge e : state.spanningTree){
 			e.draw(g, Color.GREEN);
 			e.node1.draw(g, Color.GREEN);
 			e.node2.draw(g, Color.GREEN);
 		}
-		
+
 		// draw unprocessed edges
-		for (Edge e : state.notInSpanningTree){
+		for (Edge e : state.toBeChecked){
 			e.draw(g, Color.BLACK);
 		}
-		
+
 		// draw last processed edge, if there is one
 		Edge lastTouched = state.lastProcessed;
 		if (lastTouched != null){
@@ -81,9 +81,9 @@ public class Kruskals extends Algorithm{
 			lastTouched.node1.draw(g, Color.CYAN);
 			lastTouched.node2.draw(g, Color.CYAN);
 		}
-		
-		
-		
+
+
+
 	}
 
 	/**
@@ -95,16 +95,16 @@ public class Kruskals extends Algorithm{
 	private class State implements Iteration{
 		private Edge lastProcessed;
 		private Set<Edge> spanningTree;
-		private Set<Edge> notInSpanningTree;
+		private Set<Edge> toBeChecked;
 		public State(Edge e, Set<Edge> s, PriorityQueue<Edge> edges){
 			if (e != null) lastProcessed = e.clone();
 			spanningTree = new HashSet<Edge>();
 			for (Edge edge : s){
 				spanningTree.add(edge.clone());
 			}
-			notInSpanningTree = new HashSet<Edge>();
+			toBeChecked = new HashSet<Edge>();
 			for (Edge edge : edges){
-				notInSpanningTree.add(edge);
+				toBeChecked.add(edge);
 			}
 		}
 	}
@@ -113,7 +113,7 @@ public class Kruskals extends Algorithm{
 	protected int numberOfStates() {
 		return states.size();
 	}
-	
+
 	/**
 	 * UFNode - or 'UnionFindNode', is what we use to perform Kruskal's. The set of nodes in the
 	 * tree is represented as the union of disjoint sets. Each node has a head. If you follow the
@@ -126,7 +126,7 @@ public class Kruskals extends Algorithm{
 			super(node.X,node.Y);
 		}
 	}
-	
+
 	/**
 	 * Find and return the node that represents the set containing the node that you provide.
 	 * @param node: node whose head you'll find.
@@ -138,7 +138,7 @@ public class Kruskals extends Algorithm{
 		if (parent != node) node.head = parent;
 		return parent;
 	}
-	
+
 	/**
 	 * Take the union of these two sets by setting their
 	 * heads to be the same. Returns true if the sets were
@@ -157,5 +157,5 @@ public class Kruskals extends Algorithm{
 	}
 
 
-	
+
 }
