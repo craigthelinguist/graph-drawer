@@ -48,7 +48,6 @@ public class Sidebar extends JTabbedPane{
 		addTab("Algorithms", null, algorithmPane, "Let's you select and run an algorithm.");
 		setMnemonicAt(1, KeyEvent.VK_A);
 
-
 		addChangeListener(new ChangeListener(){
 
 			public void stateChanged(ChangeEvent e){
@@ -56,6 +55,7 @@ public class Sidebar extends JTabbedPane{
 			}
 
 		});
+
 	}
 
 	private String getTab(){
@@ -69,7 +69,6 @@ public class Sidebar extends JTabbedPane{
 	public void sendEvent(String event){
 		controller.algorithmEvent(event);
 	}
-
 	/**
 	 * Check whether any drawn edges should be directed.
 	 * @return: true if edges should be directed, false otherwise.
@@ -77,7 +76,6 @@ public class Sidebar extends JTabbedPane{
 	public boolean areEdgesDirected(){
 		return graphingPane.areEdgesDirected();
 	}
-
 	/**
 	 * Returns the number in the edge weight text field, specifying what the weight
 	 * of any created edges should be.
@@ -94,12 +92,10 @@ public class Sidebar extends JTabbedPane{
 	public void printOutput(String txt){
 		algorithmPane.println(txt);
 	}
-
 	/**
 	 * Tells AlgorithmPane to clear its text area.
 	 */
 	public void clearOutput(){
 		algorithmPane.clearText();
 	}
-
 }

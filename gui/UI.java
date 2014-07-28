@@ -209,5 +209,4 @@ public class UI extends JFrame {
 	public static void main(String[] args) {
 		new UI();
 	}
-
 }
