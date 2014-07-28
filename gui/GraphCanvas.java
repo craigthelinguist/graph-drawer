@@ -3,6 +3,7 @@ package gui;
 import graph.Node;
 import gui.UI.Mode;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -36,6 +37,7 @@ public class GraphCanvas extends JPanel {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		controller.drawGraph(g);
 		if (controller.getMode() == Mode.GRAPHING) {
