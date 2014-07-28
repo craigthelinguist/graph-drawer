@@ -9,15 +9,15 @@ public class Edge implements Comparable<Edge> {
 	public final boolean directed;
 	public final Node node1;
 	public final Node node2;
-	int weight;
-	
+	public final int weight;
+
 	public Edge(Node n1, Node n2, boolean dir, int w){
 		node1 = n1;
 		node2 = n2;
 		directed = dir;
 		weight = w;
 	}
-	
+
 	/**
 	 * Draw the edge on the screen in black.
 	 * @param g: object on which to draw the edge.
@@ -40,7 +40,7 @@ public class Edge implements Comparable<Edge> {
 	public int compareTo(Edge other) {
 		return this.weight - other.weight;
 	}
-	
+
 	@Override
 	/**
 	 * Returns a shallow clone of this object.
