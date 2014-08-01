@@ -126,6 +126,10 @@ public class UI extends JFrame {
 		else if (name.equals(algorithms[2])) {
 			algorithm = new Kruskals(graph);
 		}
+		else if (name.equals(algorithms[3])){
+			JOptionPane.showMessageDialog(this, "Articulation points algorithm not yet fully implemented.");
+			return;
+		}
 		else{
 			algorithm = null;
 			selectedAlgorithm = "";
