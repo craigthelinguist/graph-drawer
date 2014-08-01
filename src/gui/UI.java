@@ -10,6 +10,7 @@ import java.awt.Graphics;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import algorithms.AStar;
 import algorithms.Algorithm;
@@ -116,7 +117,10 @@ public class UI extends JFrame {
 		if (name.equals(algorithms[1])){
 			Node start = canvas.getSelected(0);
 			Node goal = canvas.getSelected(1);
-			if (start == null || goal == null) return;
+			if (start == null || goal == null){
+				JOptionPane.showMessageDialog(this, "You must select a start node and an end node for A*. Select nodes by left-clicking them.");
+				return;
+			}
 			algorithm = new AStar(graph,start,goal);
 		}
 		else if (name.equals(algorithms[2])) {
