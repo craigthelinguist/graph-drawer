@@ -4,6 +4,7 @@ import graph.Edge;
 import graph.Graph;
 import graph.Node;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,36 +15,47 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import algorithms.Algorithm.Iteration;
+
 public class AStar extends Algorithm{
 
 	private List<State> states = new ArrayList<>();
-	private Graph ogGraph;
+	private Set<StarEdge> edges; //contains edges converted to where weight = euclidean distance
+	private Set<StarNode> nodes;
+	private StarNode goal;
+	
+	private Color COLOR_PATH = new Color(152,251,152);
+	private Color COLOR_VISITED = new Color(46,139,87);
+	private Color COLOR_FRINGE = new Color(143,188,143);
+	private Color COLOR_GOAL = new Color(95,158,160);
+	private Color COLOR_UNVISITED = new Color(244,238,224);
+	
+	public AStar(Graph graph, Node start, Node goal){
 
-	public AStar(Graph g, Node strt, Node gol){
-
-		// store the original graph
-		ogGraph = g;
-
-		// convert ogGraph into a graph suitable for this algorithm.
-		Map<Node,StarNode> mapping = new HashMap<>(); //correspondence from ogGraph -> A*'s graph
-		Set<StarNode> nodes = new HashSet<>();
-		for (Node node : g.getNodes()){
+		// convert the graph into one appropriate for A* - this is necessary because edge weights
+		// are probably arbitrary and they must be consistent for this algorithm to work.
+		Map<Node,StarNode> mapping = new HashMap<>();
+		nodes = new HashSet<>();
+		for (Node node : graph.getNodes()){
 			StarNode starNode = new StarNode(node);
 			nodes.add(starNode);
-			mapping.put(node,starNode);
+			mapping.put(node, starNode);
 		}
-		Set<StarEdge> edges = new HashSet<>();
-		for (Edge edge : g.getEdges()){
+		edges = new HashSet<>();
+		for (Edge edge : graph.getEdges()){
 			StarNode node1 = mapping.get(edge.node1);
 			StarNode node2 = mapping.get(edge.node2);
-			StarEdge starEdge = new StarEdge(edge,node1,node2);
+			StarEdge starEdge = new StarEdge(node1,node2,edge);
+			node1.addNeighbour(starEdge, node1);
+			node2.addNeighbour(starEdge, node2);
+			edges.add(starEdge);
 		}
-
-		// solve the algorithm
-		StarNode start = mapping.get(strt);
-		StarNode goal = mapping.get(gol);
-		solve(start,goal,nodes,edges);
-
+		
+		this.goal = mapping.get(goal);
+		
+		// solve algorithm
+		solve(mapping.get(start),mapping.get(goal));
+		
 	}
 
 	/**
@@ -51,81 +63,209 @@ public class AStar extends Algorithm{
 	 * @param graph
 	 * @param goal
 	 */
-	private void solve(StarNode start, StarNode goal, Set<StarNode> nodes, Set<StarEdge> edges){
+	private void solve(final StarNode start, final StarNode goal){
 
-		// record initial, 'empty' state
-		states.add(new State(null,nodes,null));
-
-		// algorithm preparation
-		Comparator<StarNode> comp = new Comparator<StarNode>(){
-
-			@Override
-			public int compare(StarNode o1, StarNode o2) {
-				return 0; // TODO: this
+		// set up; push start node onto fringe; record initial state
+		Set<StarNode> visited = new HashSet<>();
+		PriorityQueue<FringeNode> fringe = new PriorityQueue<>();
+		fringe.offer(new FringeNode(start,null,0,distanceBetween(start,goal)));
+		states.add(new State(visited,fringe,fringe.peek()));
+		
+		while (true){
+			
+			// get next thing off the fringe
+			FringeNode currentFringeNode = fringe.poll();
+			StarNode currentNode = currentFringeNode.node;
+			
+			// already visited the node
+			if (visited.contains(currentNode)){
+				states.add(new State(visited,fringe,currentFringeNode));
+				continue;
 			}
-
-
-
-		};
-		PriorityQueue<StarNode> fringe = new PriorityQueue<>();
-
-	}
-
-	/**
-	 * 'StarEdge' is a wrapper class for the edges in A*. Since it is possible for the user to
-	 * enter arbitrary edge weights, A* will convert the visual structure of the graph into something
-	 * that will have weights that make Euclidean both feasible (never overstimates) and consistent
-	 * (the estimate never gets worse).
-	 * @author craigaaro
-	 */
-	private class StarEdge extends Edge{
-		public StarEdge(Edge e, StarNode n1, StarNode n2){
-			super(n1,n2,e.directed,e.weight);
+			
+			// reached goal node
+			if (currentNode == goal){
+				visited.add(currentNode);
+				states.add(new State(visited,fringe,currentFringeNode));
+				states.add(new State(null,null,currentFringeNode));
+				return;
+			}
+			
+			// otherwise add neighbours onto fringe
+			visited.add(currentNode);
+			for (Map.Entry<StarEdge,StarNode> entry : currentNode.neighbours.entrySet()){
+				StarEdge edge = entry.getKey();
+				StarNode neighbour = entry.getValue();
+				if (visited.contains(neighbour)) continue;
+				int cost = currentFringeNode.costToHere + edge.weight;
+				int dist = distanceBetween(currentNode,neighbour);
+				FringeNode newFringeNode = new FringeNode(neighbour,currentFringeNode,cost,dist);
+				fringe.offer(newFringeNode);
+			}
+			
+			// record state, keep going
+			states.add(new State(visited,fringe,currentFringeNode));
+			
 		}
+		
+	}
+	
+	private class StarNode{
+		private Map<StarEdge,StarNode> neighbours;
+		private Node node;
+		
+		private StarNode(Node n){
+			neighbours = new HashMap<>();
+		}
+		
+		private void addNeighbour(StarEdge e, StarNode sn){
+			neighbours.put(e,sn);
+		}
+		
+		private void draw(Graphics g, Color col){
+			node.draw(g, col);
+		}
+		
+	}
+	
+	private class StarEdge{
+		private Edge edge;
+		private StarNode node1;
+		private StarNode node2;
+		private boolean directed;
+		private int weight;
+		
+		private StarEdge(StarNode n1, StarNode n2, Edge e){
+			edge = e;
+			node1 = n1;
+			node2 = n2;
+			directed = e.directed;
+			weight = distanceBetween(n1,n2);
+		}
+		
+		private void draw(Graphics g, Color col){
+			g.setColor(col);
+			g.drawLine(node1.node.X, node1.node.Y, node2.node.X, node2.node.Y);
+			g.drawString(""+weight, (node1.node.XMID + node2.node.XMID)/2, (node1.node.YMID + node2.node.YMID)/2);
+		}
+		
+	}
+	
+	/**
+	 * Helper method. Returns the straight-line distance between two nodes.
+	 * @param n1: first node.
+	 * @param n2: second node.
+	 * @return: distance between n1 and n2.
+	 */
+	private int distanceBetween(StarNode n1, StarNode n2){
+		int dx = Math.abs(n1.node.X - n2.node.X);
+		int dy = Math.abs(n1.node.Y - n2.node.Y);
+		return dx*dx + dy*dy;
 	}
 
-	/**
-	 * 'StarNode' is a wrapper class for Node. It stores some extra information that A* requires
-	 * in order to complete, such as the cost to this node.
-	 * @author craigaaro
-	 */
-	private class StarNode extends Node{
-		private StarNode from = null;
-		private boolean visited = false;
+	private class FringeNode implements Comparable<FringeNode>{
+		private StarNode node;
+		private FringeNode from;
 		private int costToHere;
-
-		public StarNode(Node n){
-			super(n.X,n.Y);
+		private int estimate;
+		
+		private FringeNode(StarNode node, FringeNode from, int cost, int heuristic){
+			this.node = node;
+			this.from = from;
+			costToHere = cost;
+			estimate = heuristic;
 		}
-
+		
+		@Override
+		public int compareTo(FringeNode other) {
+			return (costToHere + estimate) - (other.costToHere + estimate);
+		}
+		
+		@Override
+		public int hashCode(){
+			return node.hashCode();
+		}
+		
 	}
-
+	
 	/**
 	 * The state of A* is a set of visited nodes, a priorityQueue of nodes ready to be
 	 * visited, and the last visited node.
 	 * @author craigaaro
 	 */
 	private class State implements Iteration{
-		private Set<Node> visited;
-		private Set<Node> toBeVisited;
-		private Node lastVisited;
-		private State(Set<StarNode> _visited, Set<StarNode> nodes, Node _lastVisited){
-
+		private Set<StarNode> visited;
+		private PriorityQueue<FringeNode> fringe;
+		private FringeNode lastVisited;
+		private State(Set<StarNode> visited, PriorityQueue<FringeNode> fringe, FringeNode lastVisited){
+			this.visited = visited;
+			this.fringe = fringe;
+			this.lastVisited = lastVisited;
 		}
-
-	}
-
-	@Override
-	protected int numberOfStates() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
-
+		
+		State state = states.get(stateIndex);
+		
+		// draw all edges
+		for (StarEdge se : edges) se.draw(g, Color.DARK_GRAY);
+		
+		// draw all nodes
+		for (StarNode sn : nodes) sn.draw(g,COLOR_UNVISITED);
+		
+		// draw visited nodes
+		if (state.visited != null){
+			for (StarNode sn : state.visited) sn.draw(g,COLOR_VISITED);
+		}
+		
+		// draw fringe nodes
+		if (state.fringe != null){
+			for (FringeNode fn : state.fringe){
+				StarNode sn = fn.node;
+				sn.draw(g, COLOR_FRINGE);
+			}
+		}
+		
+		// draw path from last processed to start
+		if (state.lastVisited != null){
+			
+			FringeNode fn = state.lastVisited;
+			while (fn != null){
+				if (fn.from != null){
+					StarEdge edge = edgeBetween(fn.node,fn.from.node);
+					edge.draw(g, COLOR_PATH);
+				}
+				fn.node.draw(g, COLOR_PATH);
+				fn = fn.from;
+			}
+			
+		}
+		
+		// draw goal node
+		goal.draw(g, COLOR_GOAL);
+		
+		
 	}
-
-
+	
+	/**
+	 * Get the edge between two nodes, or null if there isn't one.
+	 * @param node1: first node.
+	 * @param node2: second node.
+	 * @return: edge between node1 and node2.
+	 */
+	private StarEdge edgeBetween(StarNode node1, StarNode node2){
+		if (node1 == null || node2 == null) throw new NullPointerException();
+		for (Map.Entry<StarEdge,StarNode> entry : node1.neighbours.entrySet()){
+			if (entry.getValue() == node2) return entry.getKey();
+		}
+		return null;
+	}
+	
+	@Override
+	protected int numberOfStates() {
+		return states.size();
+	}
+	
 }
