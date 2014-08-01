@@ -182,7 +182,7 @@ public class AlgorithmPane extends JPanel{
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				sidebar.sendEvent("help");
+				sidebar.sendButtonPress("help");
 			}
 			
 		});
@@ -191,7 +191,7 @@ public class AlgorithmPane extends JPanel{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sidebar.sendEvent("run");
+				sidebar.sendButtonPress("run");
 			}
 		
 		});
@@ -200,7 +200,7 @@ public class AlgorithmPane extends JPanel{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sidebar.sendEvent("back");
+				sidebar.sendButtonPress("back");
 			}
 		
 		});
@@ -209,7 +209,7 @@ public class AlgorithmPane extends JPanel{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sidebar.sendEvent("step");
+				sidebar.sendButtonPress("step");
 			}
 		
 		});
@@ -218,7 +218,7 @@ public class AlgorithmPane extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e){
-				sidebar.sendEvent(dropdown.getSelectedItem().toString());
+				sidebar.sendAlgorithmChange(dropdown.getSelectedItem().toString());
 			}
 			
 		});
@@ -237,6 +237,13 @@ public class AlgorithmPane extends JPanel{
 	 */
 	public void clearText(){
 		textArea_output.setText("");
+	}
+	
+	
+	public String getAlgorithmName(){
+		String name = dropdown.getSelectedItem().toString();
+		System.out.println("selected item is " + name);
+		return name;
 	}
 	
 	public String toString(){

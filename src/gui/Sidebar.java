@@ -61,14 +61,15 @@ public class Sidebar extends JTabbedPane{
 	private String getTab(){
 		return this.getSelectedComponent().toString();
 	}
-
-	/**
-	 * Sends an event to the controller in the form of a string.
-	 * @param event: name of event.
-	 */
-	public void sendEvent(String event){
-		controller.algorithmEvent(event);
+	
+	public void sendButtonPress(String event){
+		controller.buttonPress(event);
 	}
+	
+	public void sendAlgorithmChange(String event){
+		controller.algorithmChange(event);
+	}
+	
 	/**
 	 * Check whether any drawn edges should be directed.
 	 * @return: true if edges should be directed, false otherwise.
@@ -85,6 +86,10 @@ public class Sidebar extends JTabbedPane{
 		return graphingPane.getEdgeWeight();
 	}
 
+	public String getAlgorithmName(){
+		return algorithmPane.getAlgorithmName();
+	}
+	
 	/**
 	 * Tells AlgorithmPane to append a string to its text area.
 	 * @param txt: the string to be appended.

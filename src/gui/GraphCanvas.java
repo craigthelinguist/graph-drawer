@@ -40,7 +40,7 @@ public class GraphCanvas extends JPanel {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		controller.drawGraph(g);
-		if (controller.getMode() == Mode.GRAPHING) {
+		if (controller.getMode() == Mode.GRAPHING || !controller.runningAlgorithm()) {
 			controller.outlineSelection(g, selection);
 		}
 	}
@@ -59,7 +59,7 @@ public class GraphCanvas extends JPanel {
 	/**
 	 * Deselects everything.
 	 */
-	private void deselect() {
+	public void deselect() {
 		selection = new Node[MAX_SELECTABLE];
 	}
 
@@ -83,47 +83,78 @@ public class GraphCanvas extends JPanel {
 
 		@Override
 		public void mousePressed(MouseEvent click) {
-
+			
 			Mode mode = controller.getMode();
-			if (mode == Mode.ALGORITHMS) {
+			if (mode == Mode.GRAPHING) drawOnScreen(click);
+			
+			// need to select inputs
+			else if (mode == Mode.ALGORITHMS && !controller.runningAlgorithm()){
+				
+				String name = controller.getSelectedAlgorithm();
+				if (name.equals("A* Pathfinding")){
 
-			} else { // mode == Mode.GRAPHING
-
-				Node selected = controller.getNode(click.getX(), click.getY());
-				int numSelected = numberSelected();
-
-				// clicked nothing
-				if (selected == null && numSelected > 0) {
-					deselect();
-				}
-
-				// selected two nodes: create an edge and deselect.
-				else if (numSelected == 1) {
-
-					// check if you clicked on an already-selected node
-					if (selection[0] == selected) {
-						selection[0] = selected;
-					}
-
-					// otherwise add an edge between the two nodes.
-					else {
-						controller.addEdge(selection[0], selected);
+					Node selected = controller.getNode(click.getX(), click.getY());
+					int numSelected = numberSelected();
+					if (selected == null || numSelected == 2){
 						deselect();
 					}
+					else if (numSelected == 0){
+						selection[0] = selected;
+					}
+					else if (numSelected == 1){
+						selection[1] = selected;
+					}
+
+					System.out.println("Amount selected is: " + numberSelected());
+					
 				}
-				// selected no nodes: highlight the cilcked node.
-				else if (numSelected == 0 && selected != null) {
+				
+			}
+			
+			// clicking during algorithm execution
+			else{}
+			
+			GraphCanvas.this.repaint();
+				
+		}
+
+			
+		
+		private void drawOnScreen(MouseEvent click){
+
+			Node selected = controller.getNode(click.getX(), click.getY());
+			int numSelected = numberSelected();
+
+			// clicked nothing
+			if (selected == null && numSelected > 0) {
+				deselect();
+			}
+
+			// selected two nodes: create an edge and deselect.
+			else if (numSelected == 1) {
+
+				// check if you clicked on an already-selected node
+				if (selection[0] == selected) {
 					selection[0] = selected;
 				}
-				// selected no nodes, clicked nothing: create a node at that
-				// spot.
-				else if (numSelected == 0 && selected == null) {
-					controller.addNode(click.getX(), click.getY());
+
+				// otherwise add an edge between the two nodes.
+				else {
+					controller.addEdge(selection[0], selected);
+					deselect();
 				}
-
 			}
-			GraphCanvas.this.repaint();
+			// selected no nodes: highlight the cilcked node.
+			else if (numSelected == 0 && selected != null) {
+				selection[0] = selected;
+			}
+			// selected no nodes, clicked nothing: create a node at that
+			// spot.
+			else if (numSelected == 0 && selected == null) {
+				controller.addNode(click.getX(), click.getY());
+			}
 
+		
 		}
 
 		@Override
@@ -133,4 +164,8 @@ public class GraphCanvas extends JPanel {
 
 	}
 
+	public Node getSelected(int index){
+		return selection[index];
+	}
+	
 }

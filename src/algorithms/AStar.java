@@ -28,7 +28,7 @@ public class AStar extends Algorithm{
 	private Color COLOR_VISITED = new Color(46,139,87);
 	private Color COLOR_FRINGE = new Color(143,188,143);
 	private Color COLOR_GOAL = new Color(95,158,160);
-	private Color COLOR_UNVISITED = new Color(244,238,224);
+	private Color COLOR_UNVISITED = Color.white;
 	
 	public AStar(Graph graph, Node start, Node goal){
 
@@ -40,18 +40,17 @@ public class AStar extends Algorithm{
 			StarNode starNode = new StarNode(node);
 			nodes.add(starNode);
 			mapping.put(node, starNode);
+			if (node == goal) this.goal = starNode;
 		}
 		edges = new HashSet<>();
 		for (Edge edge : graph.getEdges()){
 			StarNode node1 = mapping.get(edge.node1);
 			StarNode node2 = mapping.get(edge.node2);
 			StarEdge starEdge = new StarEdge(node1,node2,edge);
-			node1.addNeighbour(starEdge, node1);
-			node2.addNeighbour(starEdge, node2);
+			node1.addNeighbour(starEdge, node2);
+			node2.addNeighbour(starEdge, node1);
 			edges.add(starEdge);
 		}
-		
-		this.goal = mapping.get(goal);
 		
 		// solve algorithm
 		solve(mapping.get(start),mapping.get(goal));
@@ -69,7 +68,6 @@ public class AStar extends Algorithm{
 		Set<StarNode> visited = new HashSet<>();
 		PriorityQueue<FringeNode> fringe = new PriorityQueue<>();
 		fringe.offer(new FringeNode(start,null,0,distanceBetween(start,goal)));
-		states.add(new State(visited,fringe,fringe.peek()));
 		
 		while (true){
 			
@@ -98,7 +96,7 @@ public class AStar extends Algorithm{
 				StarNode neighbour = entry.getValue();
 				if (visited.contains(neighbour)) continue;
 				int cost = currentFringeNode.costToHere + edge.weight;
-				int dist = distanceBetween(currentNode,neighbour);
+				int dist = distanceBetween(currentNode,goal);
 				FringeNode newFringeNode = new FringeNode(neighbour,currentFringeNode,cost,dist);
 				fringe.offer(newFringeNode);
 			}
@@ -115,6 +113,7 @@ public class AStar extends Algorithm{
 		private Node node;
 		
 		private StarNode(Node n){
+			node = n;
 			neighbours = new HashMap<>();
 		}
 		
@@ -145,7 +144,7 @@ public class AStar extends Algorithm{
 		
 		private void draw(Graphics g, Color col){
 			g.setColor(col);
-			g.drawLine(node1.node.X, node1.node.Y, node2.node.X, node2.node.Y);
+			g.drawLine(node1.node.XMID, node1.node.YMID, node2.node.XMID, node2.node.YMID);
 			g.drawString(""+weight, (node1.node.XMID + node2.node.XMID)/2, (node1.node.YMID + node2.node.YMID)/2);
 		}
 		
@@ -160,7 +159,7 @@ public class AStar extends Algorithm{
 	private int distanceBetween(StarNode n1, StarNode n2){
 		int dx = Math.abs(n1.node.X - n2.node.X);
 		int dy = Math.abs(n1.node.Y - n2.node.Y);
-		return dx*dx + dy*dy;
+		return (int)(Math.sqrt(dx*dx + dy*dy));
 	}
 
 	private class FringeNode implements Comparable<FringeNode>{
@@ -186,6 +185,7 @@ public class AStar extends Algorithm{
 			return node.hashCode();
 		}
 		
+		
 	}
 	
 	/**
@@ -197,10 +197,25 @@ public class AStar extends Algorithm{
 		private Set<StarNode> visited;
 		private PriorityQueue<FringeNode> fringe;
 		private FringeNode lastVisited;
-		private State(Set<StarNode> visited, PriorityQueue<FringeNode> fringe, FringeNode lastVisited){
-			this.visited = visited;
-			this.fringe = fringe;
-			this.lastVisited = lastVisited;
+		private State(Set<StarNode> _visited, PriorityQueue<FringeNode> _fringe, FringeNode _lastVisited){
+			
+			if (_visited != null){
+				this.visited = new HashSet<>();
+				for (StarNode sn : _visited){
+					this.visited.add(sn);
+				}
+			}
+			else this.visited = null;
+			
+			if (fringe != null){
+				this.fringe = _fringe;
+				for (FringeNode fn : fringe){	
+					this.fringe.add(fn);
+				}
+			}
+			else this.fringe = null;
+			
+			this.lastVisited = _lastVisited;
 		}
 	}
 
@@ -232,12 +247,14 @@ public class AStar extends Algorithm{
 		if (state.lastVisited != null){
 			
 			FringeNode fn = state.lastVisited;
+			Color color = (fn.node == goal) ? COLOR_GOAL : COLOR_PATH;
+			
 			while (fn != null){
 				if (fn.from != null){
 					StarEdge edge = edgeBetween(fn.node,fn.from.node);
-					edge.draw(g, COLOR_PATH);
+					edge.draw(g, color);
 				}
-				fn.node.draw(g, COLOR_PATH);
+				fn.node.draw(g, color);
 				fn = fn.from;
 			}
 			

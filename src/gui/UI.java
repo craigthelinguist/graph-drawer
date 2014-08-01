@@ -11,12 +11,13 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import algorithms.AStar;
 import algorithms.Algorithm;
 import algorithms.Kruskals;
 
 /**
  * UI functions as the controller for all gui components. When any part of the
- * gui receives an action or event, it sends that information to UI, which then
+ * gui receives an action or buttonName, it sends that information to UI, which then
  * tells all the components how to react.
  *
  * @author craigthelinguist
@@ -49,6 +50,7 @@ public class UI extends JFrame {
 
 	// mode keeps track of whether you're in algorithms mode or graphing mode
 	private Mode mode = Mode.GRAPHING;
+	private String selectedAlgorithm = "";
 
 	public UI() {
 		canvas = new GraphCanvas(this);
@@ -64,56 +66,66 @@ public class UI extends JFrame {
 		setVisible(true);
 	}
 
-	/**
-	 * A response to some button click. The name can be 'help', 'step', 'back',
-	 * 'run', or some algorithm name as defined in the static array
-	 * UI.algorithms.
-	 *
-	 * @param event
-	 *            : name of the event
-	 */
-	public void algorithmEvent(String event) {
-		System.out.println("received event: " + event);
-		switch (event) {
-		case "help":
-			// TODO: respond to help event. maybe change output to explain the
-			// algorithm?
-			break;
-		case "step":
-			algorithm.nextIteration();
-			break;
-		case "back":
-			algorithm.previousIteration();
-			break;
-		case "run":
-			algorithm.lastIteration();
-			break;
-		default:
-			createAlgorithm(event);
-			break;
+	public void buttonPress(String buttonName){
+		
+		if (algorithm == null){
+			createAlgorithm();
 		}
+		else if (buttonName.equals("step")){
+			algorithm.nextIteration();
+		}
+		else if (buttonName.equals("back")){
+			algorithm.previousIteration();
+		}
+		else if (buttonName.equals("run")){
+			algorithm.lastIteration();
+		}
+		
+		canvas.repaint();
+		
+	}
+	
+	public void algorithmChange(String algorithmName){
+		algorithm = null;
+		selectedAlgorithm = algorithmName;
+		createAlgorithm();
 		canvas.repaint();
 	}
-
+	
 	public void modeChange(String name) {
 		System.out.println("Mode change: " + name);
 		if (name.equals("algorithms")) {
 			mode = Mode.ALGORITHMS;
+			canvas.deselect();
 		} else if (name.equals("graphing")) {
 			mode = Mode.GRAPHING;
-			algorithm = null;
 		}
+		algorithm = null;
 		canvas.repaint();
 	}
 
 	/**
 	 * Creates an algorithm based on the value in the text field.
 	 */
-	private void createAlgorithm(String name) {
-		if (name.equals(algorithms[2])) {
+	private void createAlgorithm() {
+		
+		String name = getSelectedAlgorithm();
+		System.out.println("selected algorithm is " + name);
+		selectedAlgorithm = name;
+		
+		if (name.equals(algorithms[1])){
+			Node start = canvas.getSelected(0);
+			Node goal = canvas.getSelected(1);
+			if (start == null || goal == null) return;
+			algorithm = new AStar(graph,start,goal);
+		}
+		else if (name.equals(algorithms[2])) {
 			algorithm = new Kruskals(graph);
-		} else
+		}
+		else{
 			algorithm = null;
+			selectedAlgorithm = "";
+		}
 	}
 
 	/**
@@ -165,7 +177,8 @@ public class UI extends JFrame {
 	public void drawGraph(Graphics g) {
 		if (mode == Mode.GRAPHING || algorithm == null) {
 			graph.draw(g);
-		} else {
+		}
+		else{
 			algorithm.draw(g);
 		}
 	}
@@ -204,6 +217,14 @@ public class UI extends JFrame {
 	 */
 	public void setMode(Mode m) {
 		mode = m;
+	}
+	
+	public boolean runningAlgorithm(){
+		return algorithm != null;
+	}
+	
+	public String getSelectedAlgorithm(){
+		return selectedAlgorithm;
 	}
 
 	public static void main(String[] args) {
