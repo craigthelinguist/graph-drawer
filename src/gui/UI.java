@@ -69,17 +69,27 @@ public class UI extends JFrame {
 
 	public void buttonPress(String buttonName){
 		
-		if (algorithm == null){
-			createAlgorithm();
+		if (mode == Mode.ALGORITHMS){
+		
+			if (algorithm == null){
+				createAlgorithm();
+			}
+			else if (buttonName.equals("step")){
+				algorithm.nextIteration();
+			}
+			else if (buttonName.equals("back")){
+				algorithm.previousIteration();
+			}
+			else if (buttonName.equals("run")){
+				algorithm.lastIteration();
+			}
 		}
-		else if (buttonName.equals("step")){
-			algorithm.nextIteration();
-		}
-		else if (buttonName.equals("back")){
-			algorithm.previousIteration();
-		}
-		else if (buttonName.equals("run")){
-			algorithm.lastIteration();
+		else if (mode == Mode.GRAPHING){
+
+			if (buttonName.equals("clear")){
+				graph = new Graph();
+			}
+				
 		}
 		
 		canvas.repaint();

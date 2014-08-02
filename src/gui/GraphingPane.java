@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 
 import javax.swing.GroupLayout;
@@ -121,8 +123,23 @@ public class GraphingPane extends JPanel {
 		pane_vertical.addComponent(topHalf);
 		pane_vertical.addComponent(bottomHalf);
 
+		addListeners();
+		
 	}
 
+	private void addListeners(){
+		
+		btn_clear.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				sidebar.sendButtonPress("clear");
+			}
+			
+		});
+		
+	}
+	
 	/**
 	 * Returns true if the 'directed edges' checkbox is ticked.
 	 * 
