@@ -60,30 +60,24 @@ public class Kruskals extends Algorithm{
 
 		// get current state and draw unprocessed nodes
 		State state = states.get(stateIndex);
-		graph.drawNodes(g,Color.WHITE);
 
-		// draw spanning tree
-		for (Edge e : state.spanningTree){
-			e.draw(g, Color.GREEN);
-			e.node1.draw(g, Color.GREEN);
-			e.node2.draw(g, Color.GREEN);
-		}
-
-		// draw unprocessed edges
-		for (Edge e : state.toBeChecked){
-			e.draw(g, Color.BLACK);
-		}
-
-		// draw last processed edge, if there is one
+		// draw edges
+		for (Edge e : state.spanningTree) e.draw(g,Color.GREEN);
+		for (Edge e : state.toBeChecked) e.draw(g, Color.BLACK);
 		Edge lastTouched = state.lastProcessed;
 		if (lastTouched != null){
 			lastTouched.draw(g, Color.CYAN);
 			lastTouched.node1.draw(g, Color.CYAN);
 			lastTouched.node2.draw(g, Color.CYAN);
 		}
-
-
-
+		
+		// draw nodes
+		graph.drawNodes(g,Color.WHITE);
+		for (Edge e : state.spanningTree){
+			e.node1.draw(g, Color.GREEN);
+			e.node2.draw(g, Color.GREEN);
+		}
+		
 	}
 
 	/**
