@@ -26,3 +26,5 @@ see A* running by itself, slowed down, without having to click 'next' all the ti
 - Checking for lack of solution in the example of algorithms where there may not be one (e.g.: Hamiltonian Cycle, Eulerian Path).
 - Panning the screen! To allow for even bigger graphs.
 - Saving and loading of graphs (particularly to give some useful pre-generated graphs, such as bipartite graphs, which are required for specific algorithms).
+- 
+url : http://i.imgur.com/I8uKaS7.jpg
