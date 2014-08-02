@@ -29,11 +29,11 @@ see A* running by itself, slowed down, without having to click 'next' all the ti
 
 Screenshots
 ===========
-http://i.imgur.com/lLwrihT.jpg
-http://i.imgur.com/I8uKaS7.jpg
-http://i.imgur.com/GnO0VHR.jpg
-http://i.imgur.com/zppg568.jpg
-http://i.imgur.com/NqdvjpT.jpg
-http://i.imgur.com/kpMIsF7.jpg
-http://i.imgur.com/vLZgbVE.png
-http://i.imgur.com/VQmi5aR.jpg
+- http://i.imgur.com/lLwrihT.jpg
+- http://i.imgur.com/I8uKaS7.jpg
+- http://i.imgur.com/GnO0VHR.jpg
+- http://i.imgur.com/zppg568.jpg
+- http://i.imgur.com/NqdvjpT.jpg
+- http://i.imgur.com/kpMIsF7.jpg
+- http://i.imgur.com/vLZgbVE.png
+- http://i.imgur.com/VQmi5aR.jpg
