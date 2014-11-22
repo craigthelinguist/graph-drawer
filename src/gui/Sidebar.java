@@ -1,6 +1,8 @@
 package gui;
 
-import gui.UI.Mode;
+
+
+import gui.GraphGui.Mode;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -16,12 +18,12 @@ import javax.swing.event.ChangeListener;
  * by two main panels: AlgorithmPane and GraphingPane. Sidebar lets you move back and
  * forward between the two modes by clicking on the 'algorithm' tab or the 'graphing' tab.
  * Whenenver an event happens in AlgorithmPane or GraphingPane, the event is passed up to
- * Sidebar, which then passes it up to UI.
- * @author craigthelinguist
+ * Sidebar, which then passes it up to GraphGui.
+ * @author craigthelingGraphGuist
  */
 public class Sidebar extends JTabbedPane{
 
-	// gui constants
+	// gGraphGui constants
 	public static final int WIDTH = 300;
 	public static final int HEIGHT = 600;
 	public static final Font LABEL_FONT = new Font("Century Gothic",Font.PLAIN,16);
@@ -30,11 +32,11 @@ public class Sidebar extends JTabbedPane{
 	// components
 	private AlgorithmPane algorithmPane;
 	private GraphingPane graphingPane;
-	private UI controller;
+	private GraphGui controller;
 	private Mode mode;
 
-	public Sidebar(UI ui){
-		controller = ui;
+	public Sidebar(GraphGui GraphGui){
+		controller = GraphGui;
 		mode = Mode.GRAPHING;
 		setSize(Sidebar.WIDTH,Sidebar.HEIGHT);
 		setPreferredSize(new Dimension(Sidebar.WIDTH,Sidebar.HEIGHT));
@@ -42,7 +44,7 @@ public class Sidebar extends JTabbedPane{
 		algorithmPane = new AlgorithmPane(this);
 		graphingPane = new GraphingPane(this);
 
-		this.setBackground(UI.BABY_BLUE);
+		this.setBackground(GraphGui.BABY_BLUE);
 		addTab("Graphing", null, graphingPane, "Let's you draw a graph.");
 		setMnemonicAt(0, KeyEvent.VK_G);
 		addTab("Algorithms", null, algorithmPane, "Let's you select and run an algorithm.");

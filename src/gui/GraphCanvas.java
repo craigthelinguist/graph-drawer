@@ -1,7 +1,7 @@
 package gui;
 
 import graph.Node;
-import gui.UI.Mode;
+import gui.GraphGui.Mode;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,14 +23,14 @@ import javax.swing.JPanel;
 public class GraphCanvas extends JPanel {
 
 	private final int MAX_SELECTABLE = 10;
-	private UI controller;
+	private GraphGui controller;
 	private Node[] selection = new Node[MAX_SELECTABLE];
 	private CanvasListener mouseListener;
 
-	public GraphCanvas(UI ui) {
+	public GraphCanvas(GraphGui ui) {
 		controller = ui;
 		setPreferredSize(new Dimension(600, 600));
-		setBackground(UI.BABY_BLUE);
+		setBackground(GraphGui.BABY_BLUE);
 		mouseListener = new CanvasListener();
 		this.addMouseListener(mouseListener);
 	}

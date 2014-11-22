@@ -51,7 +51,7 @@ public class AlgorithmPane extends JPanel{
 			JPanel panel_algorithm = new JPanel();
 			label_algorithm = new JLabel("Algorithm:");	
 			label_algorithm.setFont(Sidebar.LABEL_FONT);
-			dropdown = new JComboBox<>(UI.algorithms);
+			dropdown = new JComboBox<>(GraphGui.algorithms);
 			dropdown.setFont(Sidebar.INPUT_FONT);
 			
 			// group layout

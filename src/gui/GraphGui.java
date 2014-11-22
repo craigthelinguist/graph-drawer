@@ -23,7 +23,7 @@ import algorithms.Kruskals;
  *
  * @author craigthelinguist
  */
-public class UI extends JFrame {
+public class GraphGui extends JFrame {
 
 	/**
 	 * Keeps track of what mode the sidebar is in. Graphing: the user is able to
@@ -53,7 +53,7 @@ public class UI extends JFrame {
 	private Mode mode = Mode.GRAPHING;
 	private String selectedAlgorithm = "";
 
-	public UI() {
+	public GraphGui() {
 		canvas = new GraphCanvas(this);
 		sidebar = new Sidebar(this);
 		BorderLayout layout = new BorderLayout();
@@ -246,6 +246,6 @@ public class UI extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new UI();
+		new GraphGui();
 	}
 }
