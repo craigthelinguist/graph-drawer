@@ -71,22 +71,6 @@ public class Sidebar extends JTabbedPane{
 	public void sendAlgorithmChange(String event){
 		controller.changeAlgorithm(event);
 	}
-	
-	/**
-	 * Check whether any drawn edges should be directed.
-	 * @return: true if edges should be directed, false otherwise.
-	 */
-	public boolean areEdgesDirected(){
-		return graphingPane.areEdgesDirected();
-	}
-	/**
-	 * Returns the number in the edge weight text field, specifying what the weight
-	 * of any created edges should be.
-	 * @return: an integer.
-	 */
-	public int getEdgeWeight(){
-		return graphingPane.getEdgeWeight();
-	}
 
 	public String getAlgorithmName(){
 		return algorithmPane.getAlgorithmName();
@@ -104,5 +88,13 @@ public class Sidebar extends JTabbedPane{
 	 */
 	public void clearOutput(){
 		algorithmPane.clearText();
+	}
+
+	public void updateWeight(int weight) {
+		controller.updateWeight(weight);
+	}
+
+	public void updateDirected(boolean directed) {
+		controller.updateDirectedEdges(directed);
 	}
 }

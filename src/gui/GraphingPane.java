@@ -13,6 +13,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.NumberFormatter;
 
 /**
@@ -138,27 +140,29 @@ public class GraphingPane extends JPanel {
 			
 		});
 		
+		field_weight.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				int w = Integer.parseInt(field_weight.getText());
+				sidebar.updateWeight(w);
+			}
+			
+		});
+		
+		
+		chk_directed.addActionListener(new ActionListener(){
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0){
+				boolean directed = chk_directed.isSelected();
+				sidebar.updateDirected(directed);
+			}
+			
+		});
+		
 	}
 	
-	/**
-	 * Returns true if the 'directed edges' checkbox is ticked.
-	 * 
-	 * @return: true if the directed edges checkbox is ticked; false otherwise.
-	 */
-	public boolean areEdgesDirected() {
-		return chk_directed.isSelected();
-	}
-
-	/**
-	 * Return the value in the text field, which specifies what the weight of
-	 * any created edges should be.
-	 * 
-	 * @return: an integer.
-	 */
-	public int getEdgeWeight() {
-		return Integer.parseInt(field_weight.getText());
-	}
-
 	public String toString() {
 		return "graphing";
 	}

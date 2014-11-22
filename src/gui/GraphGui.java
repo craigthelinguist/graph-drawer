@@ -53,6 +53,10 @@ public class GraphGui extends JFrame {
 	private Mode mode = Mode.GRAPHING;
 	private String selectedAlgorithm = "";
 
+	private int weight = 1;
+	private boolean areEdgesDirected = false;
+	
+	
 	public GraphGui() {
 		canvas = new GraphCanvas(this);
 		sidebar = new Sidebar(this);
@@ -194,9 +198,7 @@ public class GraphGui extends JFrame {
 	 *            : second node.
 	 */
 	public void addEdge(Node n1, Node n2) {
-		boolean directed = sidebar.areEdgesDirected();
-		int weight = sidebar.getEdgeWeight();
-		graph.createEdge(n1, n2, directed, weight);
+		graph.createEdge(n1, n2, areEdgesDirected, weight);
 	}
 
 	/**
@@ -261,4 +263,16 @@ public class GraphGui extends JFrame {
 	public static void main(String[] args) {
 		new GraphGui();
 	}
+
+
+
+	public void updateWeight(int weight) {
+		this.weight = weight;
+	}
+
+	public void updateDirectedEdges(boolean directed){
+		this.areEdgesDirected = directed;
+	}
+
+
 }
