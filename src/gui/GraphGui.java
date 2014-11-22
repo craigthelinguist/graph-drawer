@@ -203,37 +203,6 @@ public class GraphGui extends JFrame {
 		graph.createEdge(n1, n2, areEdgesDirected, weight);
 	}
 
-	/**
-	 * Draw the graph.
-	 *
-	 * @param g
-	 *            : object on which to draw.
-	 */
-	public void drawGraph(Graphics g) {
-		if (mode == Mode.GRAPHING || algorithm == null) {
-			graph.draw(g);
-		}
-		else{
-			algorithm.draw(g);
-		}
-	}
-
-	/**
-	 * Outline all selected nodes.
-	 *
-	 * @param g
-	 *            : object on which to draw.
-	 * @param selection
-	 *            : a list of nodes that should be outlined.
-	 */
-	public void outlineSelection(Graphics g, LinkedList<Node> selection) {
-		for (Node node : selection) {
-			if (node != null)
-				node.outline(g);
-			else
-				return;
-		}
-	}
 
 	/**
 	 * Gets the mode.
@@ -274,6 +243,23 @@ public class GraphGui extends JFrame {
 
 	public void updateDirectedEdges(boolean directed){
 		this.areEdgesDirected = directed;
+	}
+
+
+	public Algorithm getAlgorithm() {
+		return this.algorithm;
+	}
+
+
+
+
+
+
+
+
+
+	public Graph getGraph() {
+		return this.graph;
 	}
 
 

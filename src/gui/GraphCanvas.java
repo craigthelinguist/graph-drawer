@@ -1,5 +1,6 @@
 package gui;
 
+import graph.Graph;
 import graph.Node;
 import gui.GraphGui.Mode;
 
@@ -11,6 +12,8 @@ import java.awt.event.MouseListener;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;
+
+import algorithms.Algorithm;
 
 /**
  * GraphCanvas represents the part of the gui that displays the graph data
@@ -40,9 +43,9 @@ public class GraphCanvas extends JPanel {
 	protected void paintComponent(Graphics g) {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-		controller.drawGraph(g);
+		drawGraph(g);
 		if (controller.getMode() == Mode.GRAPHING || !controller.runningAlgorithm()) {
-			controller.outlineSelection(g, selection);
+			outlineSelection(g, selection);
 		}
 	}
 
@@ -156,6 +159,40 @@ public class GraphCanvas extends JPanel {
 
 	}
 
+	/**
+	 * Draw the graph.
+	 *
+	 * @param g
+	 *            : object on which to draw.
+	 */
+	public void drawGraph(Graphics g) {
+		Mode mode = controller.getMode();
+		Algorithm algorithm = controller.getAlgorithm();
+		if (mode == Mode.GRAPHING || algorithm == null) {
+			Graph graph = controller.getGraph();
+			graph.draw(g);
+		}
+		else{
+			algorithm.draw(g);
+		}
+	}
+
+	/**
+	 * Outline all selected nodes.
+	 *
+	 * @param g
+	 *            : object on which to draw.
+	 * @param selection
+	 *            : a list of nodes that should be outlined.
+	 */
+	public void outlineSelection(Graphics g, LinkedList<Node> selection) {
+		for (Node node : selection) {
+			if (node != null)
+				node.outline(g);
+			else
+				return;
+		}
+	}
 	public Node getSelected(int index){
 		return selection.get(index);
 	}
