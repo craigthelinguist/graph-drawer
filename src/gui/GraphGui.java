@@ -6,12 +6,15 @@ import graph.Node;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
+import controller.GraphController;
 
 import algorithms.AStar;
 import algorithms.Algorithm;
@@ -26,41 +29,20 @@ import algorithms.Kruskals;
  */
 public class GraphGui extends JFrame {
 
-	/**
-	 * Keeps track of what mode the sidebar is in. Graphing: the user is able to
-	 * draw a graph on the screen. Algorithm: the user can select inputs and
-	 * perform their selected algorithm.
-	 *
-	 * @author craigthelinguist
-	 */
-	public enum Mode {
-		GRAPHING, ALGORITHMS;
-	}
 
+	public static Color BABY_BLUE = new Color(227, 247, 255);
+	
 	// gui components
 	private GraphCanvas canvas;
 	private Sidebar sidebar;
-
-	// gui constants
-	public static final String[] algorithms = { "", "A* Pathfinding",
-			"Kruskal's Algorithm", "Articulation Points" };
-	public static Color BABY_BLUE = new Color(227, 247, 255);
-
-	// graph data structure
-	private Graph graph = new Graph();
-	private Algorithm algorithm;
-
-	// mode keeps track of whether you're in algorithms mode or graphing mode
-	private Mode mode = Mode.GRAPHING;
-	private String selectedAlgorithm = "";
-
-	private int weight = 1;
-	private boolean areEdgesDirected = false;
 	
+	private GraphController controller;
+
 	
-	public GraphGui() {
-		canvas = new GraphCanvas(this);
-		sidebar = new Sidebar(this);
+	public GraphGui(GraphController controller) {
+		this.controller = controller;
+		canvas = new GraphCanvas(this, controller);
+		sidebar = new Sidebar(this, controller);
 		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
 		add(canvas, BorderLayout.CENTER);
@@ -78,189 +60,32 @@ public class GraphGui extends JFrame {
 	
 	
 	
+	public static void main(String[] args){
+		GraphController controller = new GraphController();
+		GraphGui gui = new GraphGui(controller);
+		controller.setGUI(gui);
+	}
+	
 	
 
 	public void buttonPress(String buttonName){
-		
-		if (mode == Mode.ALGORITHMS){
-		
-			if (algorithm == null){
-				createAlgorithm();
-			}
-			else if (buttonName.equals("step")){
-				algorithm.nextIteration();
-			}
-			else if (buttonName.equals("back")){
-				algorithm.previousIteration();
-			}
-			else if (buttonName.equals("run")){
-				algorithm.lastIteration();
-			}
-		}
-		else if (mode == Mode.GRAPHING){
-
-			if (buttonName.equals("clear")){
-				graph = new Graph();
-			}
-				
-		}
-		
-		canvas.repaint();
-		
-	}
-	
-	public void changeAlgorithm(String algorithmName){
-		algorithm = null;
-		selectedAlgorithm = algorithmName;
-		createAlgorithm();
-		canvas.repaint();
-	}
-	
-	public void changeMode(String name) {
-		System.out.println("Mode change: " + name);
-		if (name.equals("algorithms")) {
-			mode = Mode.ALGORITHMS;
-			canvas.deselect();
-		} else if (name.equals("graphing")) {
-			mode = Mode.GRAPHING;
-		}
-		algorithm = null;
+		controller.buttonPress(buttonName);
 		canvas.repaint();
 	}
 
-	/**
-	 * Creates an algorithm based on the value in the text field.
-	 */
-	private void createAlgorithm() {
-		
-		String name = getSelectedAlgorithm();
-		System.out.println("selected algorithm is " + name);
-		selectedAlgorithm = name;
-		
-		if (name.equals(algorithms[1])){
-			Node start = canvas.getSelected(0);
-			Node goal = canvas.getSelected(1);
-			if (start == null || goal == null){
-				JOptionPane.showMessageDialog(this, "You must select a start node and an end node for A*. Select nodes by left-clicking them.");
-				return;
-			}
-			algorithm = new AStar(graph,start,goal);
-		}
-		else if (name.equals(algorithms[2])) {
-			algorithm = new Kruskals(graph);
-		}
-		else if (name.equals(algorithms[3])){
-			JOptionPane.showMessageDialog(this, "Articulation points algorithm not yet fully implemented.");
-			return;
-		}
-		else{
-			algorithm = null;
-			selectedAlgorithm = "";
-		}
-	}
-
-	
-	
-	
-	
-	
-	/**
-	 * Return the node at the location (x,y), or null if there is none.
-	 *
-	}
-	 * @param x
-	 *            : x part of where the user clicked.
-	 * @param y
-	 *            : y part of where the user clicked.
-	 * @return: the node at (x,y), or null if there is none.
-	 */
-	public Node getNode(int x, int y) {
-		return graph.getNode(x, y);
-	}
-
-	/**
-	 * Create a node centred on the given point (x,y). The node will not be
-	 * created if it overlaps with any of the other nodes.
-	 *
-	 * @param x
-	 *            : x part of the point.
-	 * @param y
-	 *            : y part of the point.
-	 */
-	public void addNode(int x, int y) {
-		graph.createNode(x - Node.RADIUS, y - Node.RADIUS);
-	}
-
-	/**
-	 * Create an edge going between the given nodes.
-	 *
-	 * @param n1
-	 *            : first node.
-	 * @param n2
-	 *            : second node.
-	 */
-	public void addEdge(Node n1, Node n2) {
-		graph.createEdge(n1, n2, areEdgesDirected, weight);
-	}
 
 
-	/**
-	 * Gets the mode.
-	 *
-	 * @return: the mode that UI is in.
-	 */
-	public Mode getMode() {
-		return mode;
-	}
 
-	/**
-	 * Sets the mode.
-	 *
-	 * @param m
-	 *            : the new mode.
-	 */
-	public void setMode(Mode m) {
-		mode = m;
+
+
+
+
+
+	public GraphCanvas getCanvas() {
+		return this.canvas;
 	}
 	
-	public boolean runningAlgorithm(){
-		return algorithm != null;
-	}
 	
-	public String getSelectedAlgorithm(){
-		return selectedAlgorithm;
-	}
-
-	public static void main(String[] args) {
-		new GraphGui();
-	}
-
-
-
-	public void updateWeight(int weight) {
-		this.weight = weight;
-	}
-
-	public void updateDirectedEdges(boolean directed){
-		this.areEdgesDirected = directed;
-	}
-
-
-	public Algorithm getAlgorithm() {
-		return this.algorithm;
-	}
-
-
-
-
-
-
-
-
-
-	public Graph getGraph() {
-		return this.graph;
-	}
 
 
 }

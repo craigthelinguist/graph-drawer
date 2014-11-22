@@ -2,7 +2,7 @@ package gui;
 
 import graph.Graph;
 import graph.Node;
-import gui.GraphGui.Mode;
+import controller.GraphController.Mode;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,6 +12,8 @@ import java.awt.event.MouseListener;
 import java.util.LinkedList;
 
 import javax.swing.JPanel;
+
+import controller.GraphController;
 
 import algorithms.Algorithm;
 
@@ -27,12 +29,14 @@ import algorithms.Algorithm;
 public class GraphCanvas extends JPanel {
 
 	private final int MAX_SELECTABLE = 10;
-	private GraphGui controller;
+	private GraphGui gui;
+	private GraphController controller;
 	private LinkedList<Node> selection = new LinkedList<>();
 	private CanvasListener mouseListener;
 
-	public GraphCanvas(GraphGui ui) {
-		controller = ui;
+	public GraphCanvas(GraphGui gui, GraphController controller) {
+		this.gui = gui;
+		this.controller = controller;
 		setPreferredSize(new Dimension(600, 600));
 		setBackground(GraphGui.BABY_BLUE);
 		mouseListener = new CanvasListener();

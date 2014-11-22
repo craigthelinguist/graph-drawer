@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import controller.GraphController;
+
 /**
  * AlgorithmPane is one tab of the Sidebar. When AlgorithmPane is visible the user is able to specify
  * an algorithm from the dropdown box. There are four buttons:
@@ -51,7 +53,7 @@ public class AlgorithmPane extends JPanel{
 			JPanel panel_algorithm = new JPanel();
 			label_algorithm = new JLabel("Algorithm:");	
 			label_algorithm.setFont(Sidebar.LABEL_FONT);
-			dropdown = new JComboBox<>(GraphGui.algorithms);
+			dropdown = new JComboBox<>(GraphController.algorithms);
 			dropdown.setFont(Sidebar.INPUT_FONT);
 			
 			// group layout

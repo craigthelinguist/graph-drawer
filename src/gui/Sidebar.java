@@ -2,7 +2,8 @@ package gui;
 
 
 
-import gui.GraphGui.Mode;
+import controller.GraphController;
+import controller.GraphController.Mode;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -32,11 +33,13 @@ public class Sidebar extends JTabbedPane{
 	// components
 	private AlgorithmPane algorithmPane;
 	private GraphingPane graphingPane;
-	private GraphGui controller;
+	private GraphGui gui;
+	private GraphController controller;
 	private Mode mode;
 
-	public Sidebar(GraphGui GraphGui){
-		controller = GraphGui;
+	public Sidebar(GraphGui gui, final GraphController controller){
+		this.gui = gui;
+		this.controller = controller;
 		mode = Mode.GRAPHING;
 		setSize(Sidebar.WIDTH,Sidebar.HEIGHT);
 		setPreferredSize(new Dimension(Sidebar.WIDTH,Sidebar.HEIGHT));
