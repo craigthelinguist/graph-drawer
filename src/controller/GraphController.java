@@ -1,6 +1,7 @@
 package controller;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JOptionPane;
 
@@ -9,6 +10,7 @@ import algorithms.Algorithm;
 import algorithms.Kruskals;
 import graph.Graph;
 import graph.Node;
+import gui.GraphCanvas;
 import gui.GraphGui;
 
 public class GraphController {
@@ -76,6 +78,39 @@ public class GraphController {
 		}
 		
 	}
+	
+	public void mousePressed(MouseEvent click) {
+		
+		Mode mode = getMode();
+		if (mode == Mode.GRAPHING) gui.getCanvas().drawOnScreen(click);
+		
+		// need to select inputs
+		else if (mode == Mode.ALGORITHMS && !runningAlgorithm()){
+			
+			String name = getSelectedAlgorithm();
+			if (name.equals("A* Pathfinding")){
+
+				Node selected = getNode(click.getX(), click.getY());
+				int numSelected = gui.getCanvas().numberSelected();
+				if (selected == null || numSelected >= 2){
+					gui.getCanvas().deselect();
+				}
+				else{
+					gui.getCanvas().addSelected(selected);
+				}
+			}
+			
+		}
+		
+		// clicking during algorithm execution
+		else{}
+		
+		gui.getCanvas().repaint();		
+	}
+	
+	
+	
+	
 	
 
 	public void changeAlgorithm(String algorithmName){

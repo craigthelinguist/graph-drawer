@@ -56,7 +56,7 @@ public class GraphCanvas extends JPanel {
 	/**
 	 * Returns the number of nodes that are currently selected.
 	 */
-	private int numberSelected() {
+	public int numberSelected() {
 		return selection.size();
 	}
 
@@ -117,45 +117,6 @@ public class GraphCanvas extends JPanel {
 				
 		}
 
-			
-		
-		private void drawOnScreen(MouseEvent click){
-
-			Node selected = controller.getNode(click.getX(), click.getY());
-			int numSelected = numberSelected();
-
-			// clicked nothing
-			if (selected == null && numSelected > 0) {
-				deselect();
-			}
-
-			// selected two nodes: create an edge and deselect.
-			else if (numSelected == 1) {
-
-				// check if you clicked on an already-selected node
-				if (selection.get(0) == selected) {
-					selection.add(0,selected);
-				}
-
-				// otherwise add an edge between the two nodes.
-				else {
-					controller.addEdge(selection.get(0), selected);
-					deselect();
-				}
-			}
-			// selected no nodes: highlight the cilcked node.
-			else if (numSelected == 0 && selected != null) {
-				selection.add(0,selected);
-			}
-			// selected no nodes, clicked nothing: create a node at that
-			// spot.
-			else if (numSelected == 0 && selected == null) {
-				controller.addNode(click.getX(), click.getY());
-			}
-
-		
-		}
-
 		@Override
 		public void mouseReleased(MouseEvent e) {
 
@@ -201,5 +162,43 @@ public class GraphCanvas extends JPanel {
 		if (selection.isEmpty()) return null;
 		return selection.get(index);
 	}
+
+	public void addSelected(Node selected) {
+		selection.add(selected);		
+	}
+
 	
+	
+	public void drawOnScreen(MouseEvent click){
+
+		Node selected = controller.getNode(click.getX(), click.getY());
+		int numSelected = numberSelected();
+		// clicked nothing
+		if (selected == null && numSelected > 0) {
+			deselect();
+		}
+		// selected two nodes: create an edge and deselect.
+		else if (numSelected == 1) {
+			// check if you clicked on an already-selected node
+			if (selection.get(0) == selected) {
+				selection.add(0,selected);
+			}
+			// otherwise add an edge between the two nodes.
+			else {
+				controller.addEdge(selection.get(0), selected);
+				deselect();
+			}
+		}
+		// selected no nodes: highlight the cilcked node.
+		else if (numSelected == 0 && selected != null) {
+			selection.add(0,selected);
+		}
+		// selected no nodes, clicked nothing: create a node at that
+		// spot.
+		else if (numSelected == 0 && selected == null) {
+			controller.addNode(click.getX(), click.getY());
+		}
+
+	}
+
 }
