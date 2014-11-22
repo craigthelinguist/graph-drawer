@@ -97,11 +97,11 @@ public class GraphController {
 		// need to select inputs
 		else if (mode == Mode.ALGORITHMS && !runningAlgorithm()){
 			
-			String name = getSelectedAlgorithm();
+			String name = selectedAlgorithm;
 			if (name.equals("A* Pathfinding")){
 				
 				Node selected = graph.getNode(click.getX(), click.getY());
-				int numSelected = numberSelected();
+				int numSelected = selection.size();
 				if (selected == null || numSelected >= 2){
 					deselect();
 				}
@@ -118,15 +118,6 @@ public class GraphController {
 	}
 	
 	
-	
-	
-
-	/**
-	 * Returns the number of nodes that are currently selected.
-	 */
-	public int numberSelected() {
-		return selection.size();
-	}
 
 	/**
 	 * Deselects everything.
@@ -150,7 +141,7 @@ public class GraphController {
 	public void drawOnScreen(MouseEvent click){
 		
 		Node selected = graph.getNode(click.getX(), click.getY());
-		int numSelected = numberSelected();
+		int numSelected = selection.size();
 		// clicked nothing
 		if (selected == null && numSelected > 0) {
 			deselect();
@@ -210,11 +201,10 @@ public class GraphController {
 
 		if (gui == null) return;
 		
-		String name = getSelectedAlgorithm();
-		System.out.println("selected algorithm is " + name);
-		selectedAlgorithm = name;
+		System.out.println("selected algorithm is " + selectedAlgorithm);
+		selectedAlgorithm = selectedAlgorithm;
 		
-		if (name.equals(algorithms[1])){
+		if (selectedAlgorithm.equals(algorithms[1])){
 			if (selection.size() != 2) return;
 			Node start = selection.get(0);
 			Node goal = selection.get(1);
@@ -224,10 +214,10 @@ public class GraphController {
 			}
 			algorithm = new AStar(graph,start,goal);
 		}
-		else if (name.equals(algorithms[2])) {
+		else if (selectedAlgorithm.equals(algorithms[2])) {
 			algorithm = new Kruskals(graph);
 		}
-		else if (name.equals(algorithms[3])){
+		else if (selectedAlgorithm.equals(algorithms[3])){
 			gui.createErrorDialog("Articulation points algorithm not yet fully implemented.");
 			return;
 		}
@@ -242,11 +232,6 @@ public class GraphController {
 		return algorithm != null;
 	}
 	
-	public String getSelectedAlgorithm(){
-		return selectedAlgorithm;
-	}
-
-
 
 	public void updateWeight(int weight) {
 		this.weight = weight;
@@ -300,17 +285,6 @@ public class GraphController {
 	public Mode getMode() {
 		return mode;
 	}
-
-	/**
-	 * Sets the mode.
-	 *
-	 * @param m
-	 *            : the new mode.
-	 */
-	public void setMode(Mode m) {
-		mode = m;
-	}
-	
 
 
 	public Graph getGraph() {
