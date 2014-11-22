@@ -2,6 +2,8 @@ package controller;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -31,6 +33,12 @@ public class GraphController {
 	public static final String[] algorithms = { "", "A* Pathfinding",
 			"Kruskal's Algorithm", "Articulation Points" };
 
+
+	private final int MAX_SELECTABLE = 10;
+	
+	private LinkedList<Node> selection = new LinkedList<>();
+	
+	
 	// graph data structure
 	private Graph graph = new Graph();
 	private Algorithm algorithm;
@@ -76,27 +84,29 @@ public class GraphController {
 			}
 				
 		}
+
+		gui.repaint();
 		
 	}
 	
 	public void mousePressed(MouseEvent click) {
 		
 		Mode mode = getMode();
-		if (mode == Mode.GRAPHING) gui.getCanvas().drawOnScreen(click);
+		if (mode == Mode.GRAPHING) drawOnScreen(click);
 		
 		// need to select inputs
 		else if (mode == Mode.ALGORITHMS && !runningAlgorithm()){
 			
 			String name = getSelectedAlgorithm();
 			if (name.equals("A* Pathfinding")){
-
-				Node selected = getNode(click.getX(), click.getY());
-				int numSelected = gui.getCanvas().numberSelected();
+				
+				Node selected = graph.getNode(click.getX(), click.getY());
+				int numSelected = numberSelected();
 				if (selected == null || numSelected >= 2){
-					gui.getCanvas().deselect();
+					deselect();
 				}
 				else{
-					gui.getCanvas().addSelected(selected);
+					selection.add(selected);
 				}
 			}
 			
@@ -104,15 +114,71 @@ public class GraphController {
 		
 		// clicking during algorithm execution
 		else{}
-		
-		gui.getCanvas().repaint();		
+		gui.repaint();
 	}
 	
 	
 	
 	
+
+	/**
+	 * Returns the number of nodes that are currently selected.
+	 */
+	public int numberSelected() {
+		return selection.size();
+	}
+
+	/**
+	 * Deselects everything.
+	 */
+	public void deselect() {
+		selection = new LinkedList<>();
+	}
+	
+	public List<Node> getSelection(){
+		return this.selection;
+	}
+	
+	
+	
 	
 
+	/**
+	 * User has drawn something on the screen.
+	 * @param click
+	 */
+	public void drawOnScreen(MouseEvent click){
+		
+		Node selected = graph.getNode(click.getX(), click.getY());
+		int numSelected = numberSelected();
+		// clicked nothing
+		if (selected == null && numSelected > 0) {
+			deselect();
+		}
+		// selected two nodes: create an edge and deselect.
+		else if (numSelected == 1) {
+			// check if you clicked on an already-selected node
+			if (selection.get(0) == selected) {
+				selection.add(0,selected);
+			}
+			// otherwise add an edge between the two nodes.
+			else {
+				addEdge(selection.get(0), selected);
+				deselect();
+			}
+		}
+		// selected no nodes: highlight the cilcked node.
+		else if (numSelected == 0 && selected != null) {
+			selection.add(0,selected);
+		}
+		// selected no nodes, clicked nothing: create a node at that
+		// spot.
+		else if (numSelected == 0 && selected == null) {
+			addNode(click.getX(), click.getY());
+		}
+
+	}
+	
 	public void changeAlgorithm(String algorithmName){
 
 		if (gui == null) return;
@@ -120,7 +186,6 @@ public class GraphController {
 		algorithm = null;
 		selectedAlgorithm = algorithmName;
 		createAlgorithm();
-		gui.getCanvas().repaint();
 	}
 	
 	public void changeMode(String name) {
@@ -130,12 +195,11 @@ public class GraphController {
 		System.out.println("Mode change: " + name);
 		if (name.equals("algorithms")) {
 			mode = Mode.ALGORITHMS;
-			gui.getCanvas().deselect();
+			deselect();
 		} else if (name.equals("graphing")) {
 			mode = Mode.GRAPHING;
 		}
 		algorithm = null;
-		gui.getCanvas().repaint();
 	}
 
 	/**
@@ -151,8 +215,9 @@ public class GraphController {
 		selectedAlgorithm = name;
 		
 		if (name.equals(algorithms[1])){
-			Node start = gui.getCanvas().getSelected(0);
-			Node goal = gui.getCanvas().getSelected(1);
+			if (selection.size() != 2) return;
+			Node start = selection.get(0);
+			Node goal = selection.get(1);
 			if (start == null || goal == null){
 				gui.createErrorDialog("You must select a start node and an end node for A*. Select nodes by left-clicking them.");
 				return;
@@ -200,22 +265,6 @@ public class GraphController {
 
 
 
-
-	
-	
-	/**
-	 * Return the node at the location (x,y), or null if there is none.
-	 *
-	}
-	 * @param x
-	 *            : x part of where the user clicked.
-	 * @param y
-	 *            : y part of where the user clicked.
-	 * @return: the node at (x,y), or null if there is none.
-	 */
-	public Node getNode(int x, int y) {
-		return graph.getNode(x, y);
-	}
 
 	/**
 	 * Create a node centred on the given point (x,y). The node will not be

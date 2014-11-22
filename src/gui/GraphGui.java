@@ -66,8 +66,6 @@ public class GraphGui extends JFrame {
 	public void createErrorDialog(String msg){
 		JOptionPane.showMessageDialog(this,msg);
 	}
-
-	
 	
 	public static void main(String[] args){
 		GraphController controller = new GraphController();

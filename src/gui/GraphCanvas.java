@@ -10,6 +10,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -28,10 +29,8 @@ import algorithms.Algorithm;
  */
 public class GraphCanvas extends JPanel {
 
-	private final int MAX_SELECTABLE = 10;
 	private GraphGui gui;
 	private GraphController controller;
-	private LinkedList<Node> selection = new LinkedList<>();
 	private CanvasListener mouseListener;
 
 	public GraphCanvas(GraphGui gui, GraphController controller) {
@@ -49,23 +48,10 @@ public class GraphCanvas extends JPanel {
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		drawGraph(g);
 		if (controller.getMode() == Mode.GRAPHING || !controller.runningAlgorithm()) {
-			outlineSelection(g, selection);
+			outlineSelection(g);
 		}
 	}
 
-	/**
-	 * Returns the number of nodes that are currently selected.
-	 */
-	public int numberSelected() {
-		return selection.size();
-	}
-
-	/**
-	 * Deselects everything.
-	 */
-	public void deselect() {
-		selection = new LinkedList<>();
-	}
 
 	private class CanvasListener implements MouseListener {
 
@@ -87,34 +73,7 @@ public class GraphCanvas extends JPanel {
 
 		@Override
 		public void mousePressed(MouseEvent click) {
-			
-			Mode mode = controller.getMode();
-			if (mode == Mode.GRAPHING) drawOnScreen(click);
-			
-			// need to select inputs
-			else if (mode == Mode.ALGORITHMS && !controller.runningAlgorithm()){
-				
-				String name = controller.getSelectedAlgorithm();
-				if (name.equals("A* Pathfinding")){
-
-					Node selected = controller.getNode(click.getX(), click.getY());
-					int numSelected = numberSelected();
-					if (selected == null || numSelected >= 2){
-						deselect();
-					}
-					else selection.add(selected);
-
-					System.out.println("Amount selected is: " + numberSelected());
-					
-				}
-				
-			}
-			
-			// clicking during algorithm execution
-			else{}
-			
-			GraphCanvas.this.repaint();
-				
+			controller.mousePressed(click);
 		}
 
 		@Override
@@ -150,55 +109,15 @@ public class GraphCanvas extends JPanel {
 	 * @param selection
 	 *            : a list of nodes that should be outlined.
 	 */
-	public void outlineSelection(Graphics g, LinkedList<Node> selection) {
+	public void outlineSelection(Graphics g) {
+		List<Node> selection = controller.getSelection();
 		for (Node node : selection) {
 			if (node != null)
 				node.outline(g);
 			else
 				return;
 		}
-	}
-	public Node getSelected(int index){
-		if (selection.isEmpty()) return null;
-		return selection.get(index);
-	}
-
-	public void addSelected(Node selected) {
-		selection.add(selected);		
-	}
-
+	}	
 	
-	
-	public void drawOnScreen(MouseEvent click){
-
-		Node selected = controller.getNode(click.getX(), click.getY());
-		int numSelected = numberSelected();
-		// clicked nothing
-		if (selected == null && numSelected > 0) {
-			deselect();
-		}
-		// selected two nodes: create an edge and deselect.
-		else if (numSelected == 1) {
-			// check if you clicked on an already-selected node
-			if (selection.get(0) == selected) {
-				selection.add(0,selected);
-			}
-			// otherwise add an edge between the two nodes.
-			else {
-				controller.addEdge(selection.get(0), selected);
-				deselect();
-			}
-		}
-		// selected no nodes: highlight the cilcked node.
-		else if (numSelected == 0 && selected != null) {
-			selection.add(0,selected);
-		}
-		// selected no nodes, clicked nothing: create a node at that
-		// spot.
-		else if (numSelected == 0 && selected == null) {
-			controller.addNode(click.getX(), click.getY());
-		}
-
-	}
 
 }
