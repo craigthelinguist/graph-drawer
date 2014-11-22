@@ -7,6 +7,7 @@ import graph.Node;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -166,6 +167,7 @@ public class GraphGui extends JFrame {
 	/**
 	 * Return the node at the location (x,y), or null if there is none.
 	 *
+	}
 	 * @param x
 	 *            : x part of where the user clicked.
 	 * @param y
@@ -224,7 +226,7 @@ public class GraphGui extends JFrame {
 	 * @param selection
 	 *            : a list of nodes that should be outlined.
 	 */
-	public void outlineSelection(Graphics g, Node[] selection) {
+	public void outlineSelection(Graphics g, LinkedList<Node> selection) {
 		for (Node node : selection) {
 			if (node != null)
 				node.outline(g);

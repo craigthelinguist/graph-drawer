@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
@@ -24,7 +25,7 @@ public class GraphCanvas extends JPanel {
 
 	private final int MAX_SELECTABLE = 10;
 	private GraphGui controller;
-	private Node[] selection = new Node[MAX_SELECTABLE];
+	private LinkedList<Node> selection = new LinkedList<>();
 	private CanvasListener mouseListener;
 
 	public GraphCanvas(GraphGui ui) {
@@ -49,18 +50,14 @@ public class GraphCanvas extends JPanel {
 	 * Returns the number of nodes that are currently selected.
 	 */
 	private int numberSelected() {
-		int i = 0;
-		for (; i < selection.length; i++)
-			if (selection[i] == null)
-				return i;
-		return i;
+		return selection.size();
 	}
 
 	/**
 	 * Deselects everything.
 	 */
 	public void deselect() {
-		selection = new Node[MAX_SELECTABLE];
+		selection = new LinkedList<>();
 	}
 
 	private class CanvasListener implements MouseListener {
@@ -95,15 +92,10 @@ public class GraphCanvas extends JPanel {
 
 					Node selected = controller.getNode(click.getX(), click.getY());
 					int numSelected = numberSelected();
-					if (selected == null || numSelected == 2){
+					if (selected == null || numSelected >= 2){
 						deselect();
 					}
-					else if (numSelected == 0){
-						selection[0] = selected;
-					}
-					else if (numSelected == 1){
-						selection[1] = selected;
-					}
+					else selection.add(selected);
 
 					System.out.println("Amount selected is: " + numberSelected());
 					
@@ -134,19 +126,19 @@ public class GraphCanvas extends JPanel {
 			else if (numSelected == 1) {
 
 				// check if you clicked on an already-selected node
-				if (selection[0] == selected) {
-					selection[0] = selected;
+				if (selection.get(0) == selected) {
+					selection.add(0,selected);
 				}
 
 				// otherwise add an edge between the two nodes.
 				else {
-					controller.addEdge(selection[0], selected);
+					controller.addEdge(selection.get(0), selected);
 					deselect();
 				}
 			}
 			// selected no nodes: highlight the cilcked node.
 			else if (numSelected == 0 && selected != null) {
-				selection[0] = selected;
+				selection.add(0,selected);
 			}
 			// selected no nodes, clicked nothing: create a node at that
 			// spot.
@@ -165,7 +157,7 @@ public class GraphCanvas extends JPanel {
 	}
 
 	public Node getSelected(int index){
-		return selection[index];
+		return selection.get(index);
 	}
 	
 }
