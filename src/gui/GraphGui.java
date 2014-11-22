@@ -66,6 +66,14 @@ public class GraphGui extends JFrame {
 		pack();
 		setVisible(true);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public void buttonPress(String buttonName){
 		
@@ -96,14 +104,14 @@ public class GraphGui extends JFrame {
 		
 	}
 	
-	public void algorithmChange(String algorithmName){
+	public void changeAlgorithm(String algorithmName){
 		algorithm = null;
 		selectedAlgorithm = algorithmName;
 		createAlgorithm();
 		canvas.repaint();
 	}
 	
-	public void modeChange(String name) {
+	public void changeMode(String name) {
 		System.out.println("Mode change: " + name);
 		if (name.equals("algorithms")) {
 			mode = Mode.ALGORITHMS;
@@ -146,6 +154,11 @@ public class GraphGui extends JFrame {
 		}
 	}
 
+	
+	
+	
+	
+	
 	/**
 	 * Return the node at the location (x,y), or null if there is none.
 	 *

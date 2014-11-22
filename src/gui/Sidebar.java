@@ -53,7 +53,7 @@ public class Sidebar extends JTabbedPane{
 		addChangeListener(new ChangeListener(){
 
 			public void stateChanged(ChangeEvent e){
-				controller.modeChange(getTab());
+				controller.changeMode(getTab());
 			}
 
 		});
@@ -69,7 +69,7 @@ public class Sidebar extends JTabbedPane{
 	}
 	
 	public void sendAlgorithmChange(String event){
-		controller.algorithmChange(event);
+		controller.changeAlgorithm(event);
 	}
 	
 	/**
