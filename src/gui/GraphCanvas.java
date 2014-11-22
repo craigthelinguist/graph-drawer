@@ -198,6 +198,7 @@ public class GraphCanvas extends JPanel {
 		}
 	}
 	public Node getSelected(int index){
+		if (selection.isEmpty()) return null;
 		return selection.get(index);
 	}
 	

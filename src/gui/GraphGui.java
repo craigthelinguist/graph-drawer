@@ -53,36 +53,26 @@ public class GraphGui extends JFrame {
 		pack();
 		setVisible(true);
 	}
-	
-	
-	
-	
-	
-	
-	
-	public static void main(String[] args){
-		GraphController controller = new GraphController();
-		GraphGui gui = new GraphGui(controller);
-		controller.setGUI(gui);
-	}
-	
-	
 
 	public void buttonPress(String buttonName){
 		controller.buttonPress(buttonName);
 		canvas.repaint();
 	}
 
-
-
-
-
-
-
-
-
 	public GraphCanvas getCanvas() {
 		return this.canvas;
+	}
+	
+	public void createErrorDialog(String msg){
+		JOptionPane.showMessageDialog(this,msg);
+	}
+
+	
+	
+	public static void main(String[] args){
+		GraphController controller = new GraphController();
+		GraphGui gui = new GraphGui(controller);
+		controller.setGUI(gui);
 	}
 	
 	

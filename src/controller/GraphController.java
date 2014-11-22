@@ -119,7 +119,7 @@ public class GraphController {
 			Node start = gui.getCanvas().getSelected(0);
 			Node goal = gui.getCanvas().getSelected(1);
 			if (start == null || goal == null){
-				JOptionPane.showMessageDialog(gui, "You must select a start node and an end node for A*. Select nodes by left-clicking them.");
+				gui.createErrorDialog("You must select a start node and an end node for A*. Select nodes by left-clicking them.");
 				return;
 			}
 			algorithm = new AStar(graph,start,goal);
@@ -128,7 +128,7 @@ public class GraphController {
 			algorithm = new Kruskals(graph);
 		}
 		else if (name.equals(algorithms[3])){
-			JOptionPane.showMessageDialog(gui, "Articulation points algorithm not yet fully implemented.");
+			gui.createErrorDialog("Articulation points algorithm not yet fully implemented.");
 			return;
 		}
 		else{
