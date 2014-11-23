@@ -72,6 +72,10 @@ public class GraphGui extends JFrame {
 		GraphGui gui = new GraphGui(controller);
 		controller.setGUI(gui);
 	}
+
+	public String currentOption() {
+		return sidebar.getAlgorithmName();
+	}
 	
 	
 

@@ -53,7 +53,7 @@ public class AlgorithmPane extends JPanel{
 			JPanel panel_algorithm = new JPanel();
 			label_algorithm = new JLabel("Algorithm:");	
 			label_algorithm.setFont(Sidebar.LABEL_FONT);
-			dropdown = new JComboBox<>(GraphController.algorithms);
+			dropdown = new JComboBox<>(GraphController.AlgorithmMode.nameArray());
 			dropdown.setFont(Sidebar.INPUT_FONT);
 			
 			// group layout
@@ -244,7 +244,6 @@ public class AlgorithmPane extends JPanel{
 	
 	public String getAlgorithmName(){
 		String name = dropdown.getSelectedItem().toString();
-		System.out.println("selected item is " + name);
 		return name;
 	}
 	

@@ -26,14 +26,44 @@ public class GraphController {
 	 */
 	public enum Mode {
 		GRAPHING, ALGORITHMS;
+		
+		@Override
+		public String toString(){
+			return this.name().toLowerCase();
+		}
+		
+		public static Mode fromString(String name){
+			name = name.toUpperCase();
+			if (name.equals("ALGORITHMS")) return ALGORITHMS;
+			else return GRAPHING;
+		}
+		
 	}
+	
+	public enum AlgorithmMode {
+		KRUSKALS, ASTAR;
+		
+		@Override
+		public String toString(){
+			return this.name().toLowerCase();
+		}
+		
+		public static String[] nameArray(){
+			return new String[]{ "Kruskals", "AStar" };
+		}
+		
+		public static AlgorithmMode fromString(String name){
+			name = name.toUpperCase();
+			return valueOf(name);
+		}
+		
+	}
+	
+	private AlgorithmMode modeAlgorithm;
+	private Algorithm runningAlgorithm;
+	
 	private GraphGui gui;
-
-	// gui constants
-	public static final String[] algorithms = { "", "A* Pathfinding",
-			"Kruskal's Algorithm", "Articulation Points" };
-
-
+	
 	private final int MAX_SELECTABLE = 10;
 	
 	private LinkedList<Node> selection = new LinkedList<>();
@@ -41,16 +71,16 @@ public class GraphController {
 	
 	// graph data structure
 	private Graph graph = new Graph();
-	private Algorithm algorithm;
 
 	// mode keeps track of whether you're in algorithms mode or graphing mode
 	private Mode mode = Mode.GRAPHING;
-	private String selectedAlgorithm = "";
 
 	private int weight = 1;
 	private boolean areEdgesDirected = false;
+	private AlgorithmFactory factory;
 	
 	public GraphController(){
+		this.factory = new AlgorithmFactory();
 	}
 	
 	public void setGUI(GraphGui gui){
@@ -63,19 +93,21 @@ public class GraphController {
 		if (gui == null) return;
 		
 		if (mode == Mode.ALGORITHMS){
-		
-			if (algorithm == null){
+			
+			if (runningAlgorithm == null){
 				createAlgorithm();
 			}
 			else if (buttonName.equals("step")){
-				algorithm.nextIteration();
+				runningAlgorithm.nextIteration();
+				
 			}
 			else if (buttonName.equals("back")){
-				algorithm.previousIteration();
+				runningAlgorithm.previousIteration();
 			}
 			else if (buttonName.equals("run")){
-				algorithm.lastIteration();
+				runningAlgorithm.lastIteration();
 			}
+			
 		}
 		else if (mode == Mode.GRAPHING){
 
@@ -97,9 +129,9 @@ public class GraphController {
 		// need to select inputs
 		else if (mode == Mode.ALGORITHMS && !runningAlgorithm()){
 			
-			String name = selectedAlgorithm;
-			if (name.equals("A* Pathfinding")){
-				
+			switch (modeAlgorithm){
+			
+			case ASTAR:
 				Node selected = graph.getNode(click.getX(), click.getY());
 				int numSelected = selection.size();
 				if (selected == null || numSelected >= 2){
@@ -108,12 +140,15 @@ public class GraphController {
 				else{
 					selection.add(selected);
 				}
+				break;
 			}
 			
 		}
 		
 		// clicking during algorithm execution
 		else{}
+		
+		
 		gui.repaint();
 	}
 	
@@ -170,66 +205,48 @@ public class GraphController {
 
 	}
 	
+	/**
+	 * Change the current algorithm that has been selected.
+	 * @param algorithmName
+	 */
 	public void changeAlgorithm(String algorithmName){
-
 		if (gui == null) return;
-		
-		algorithm = null;
-		selectedAlgorithm = algorithmName;
-		createAlgorithm();
+		modeAlgorithm = AlgorithmMode.fromString(algorithmName);
+		runningAlgorithm = null;
 	}
 	
+	/**
+	 * Change modes.
+	 * @param name: name of the new mode.
+	 */
 	public void changeMode(String name) {
-
+		System.out.println("changing mode to " + name);
 		if (gui == null) return;
-		
-		System.out.println("Mode change: " + name);
-		if (name.equals("algorithms")) {
-			mode = Mode.ALGORITHMS;
-			deselect();
-		} else if (name.equals("graphing")) {
-			mode = Mode.GRAPHING;
-		}
-		algorithm = null;
+		this.mode = Mode.fromString(name);
+		if (mode == null) mode = Mode.GRAPHING;
+		else if (mode == Mode.ALGORITHMS) changeAlgorithm(gui.currentOption());
+		runningAlgorithm = null;
+		gui.repaint();
 	}
 
 	/**
 	 * Creates an algorithm based on the value in the text field.
 	 */
 	private void createAlgorithm() {
-		
-
 		if (gui == null) return;
-		
-		System.out.println("selected algorithm is " + selectedAlgorithm);
-		selectedAlgorithm = selectedAlgorithm;
-		
-		if (selectedAlgorithm.equals(algorithms[1])){
-			if (selection.size() != 2) return;
-			Node start = selection.get(0);
-			Node goal = selection.get(1);
-			if (start == null || goal == null){
-				gui.createErrorDialog("You must select a start node and an end node for A*. Select nodes by left-clicking them.");
-				return;
-			}
-			algorithm = new AStar(graph,start,goal);
+		try{
+			this.runningAlgorithm = factory.setupAlgorithm(this.modeAlgorithm,this.graph,this.selection);
 		}
-		else if (selectedAlgorithm.equals(algorithms[2])) {
-			algorithm = new Kruskals(graph);
-		}
-		else if (selectedAlgorithm.equals(algorithms[3])){
-			gui.createErrorDialog("Articulation points algorithm not yet fully implemented.");
-			return;
-		}
-		else{
-			algorithm = null;
-			selectedAlgorithm = "";
+		catch(SetupException se){
+			gui.createErrorDialog(se.getMessage());
+			this.runningAlgorithm = null;
+			this.modeAlgorithm = null;
 		}
 	}
 
 
 	public boolean runningAlgorithm(){
-		return algorithm != null;
+		return runningAlgorithm != null;
 	}
 	
 
@@ -243,7 +260,7 @@ public class GraphController {
 
 
 	public Algorithm getAlgorithm() {
-		return this.algorithm;
+		return runningAlgorithm;
 	}
 
 
@@ -290,8 +307,5 @@ public class GraphController {
 	public Graph getGraph() {
 		return this.graph;
 	}
-
-
-	
 	
 }
