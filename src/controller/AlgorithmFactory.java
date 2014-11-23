@@ -7,7 +7,6 @@ import graph.Node;
 import algorithms.AStar;
 import algorithms.Algorithm;
 import algorithms.Kruskals;
-import controller.GraphController.AlgorithmMode;
 
 public class AlgorithmFactory {
 	

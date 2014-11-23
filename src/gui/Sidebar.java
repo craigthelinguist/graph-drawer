@@ -3,7 +3,7 @@ package gui;
 
 
 import controller.GraphController;
-import controller.GraphController.Mode;
+import controller.Mode;
 
 import java.awt.Dimension;
 import java.awt.Font;

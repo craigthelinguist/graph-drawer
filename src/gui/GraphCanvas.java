@@ -2,7 +2,6 @@ package gui;
 
 import graph.Graph;
 import graph.Node;
-import controller.GraphController.Mode;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,6 +14,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import controller.GraphController;
+import controller.Mode;
 
 import algorithms.Algorithm;
 

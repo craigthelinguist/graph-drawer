@@ -17,76 +17,34 @@ import gui.GraphGui;
 
 public class GraphController {
 
-	/**
-	 * Keeps track of what mode the sidebar is in. Graphing: the user is able to
-	 * draw a graph on the screen. Algorithm: the user can select inputs and
-	 * perform their selected algorithm.
-	 *
-	 * @author craigthelinguist
-	 */
-	public enum Mode {
-		GRAPHING, ALGORITHMS;
-		
-		@Override
-		public String toString(){
-			return this.name().toLowerCase();
-		}
-		
-		public static Mode fromString(String name){
-			name = name.toUpperCase();
-			if (name.equals("ALGORITHMS")) return ALGORITHMS;
-			else return GRAPHING;
-		}
-		
-	}
 	
-	public enum AlgorithmMode {
-		KRUSKALS, ASTAR;
-		
-		@Override
-		public String toString(){
-			return this.name().toLowerCase();
-		}
-		
-		public static String[] nameArray(){
-			return new String[]{ "Kruskals", "AStar" };
-		}
-		
-		public static AlgorithmMode fromString(String name){
-			name = name.toUpperCase();
-			return valueOf(name);
-		}
-		
-	}
-	
-	private AlgorithmMode modeAlgorithm;
-	private Algorithm runningAlgorithm;
-	
-	private GraphGui gui;
-	
-	private final int MAX_SELECTABLE = 10;
-	
-	private LinkedList<Node> selection = new LinkedList<>();
-	
-	
-	// graph data structure
-	private Graph graph = new Graph();
-
-	// mode keeps track of whether you're in algorithms mode or graphing mode
+	// keeps track of whether you are graphing or running an algorithm.
 	private Mode mode = Mode.GRAPHING;
+	private AlgorithmMode modeAlgorithm;
 
+	// the current algorithm being performed; a factory for instantiating them.
+	private Algorithm runningAlgorithm;
+	private AlgorithmFactory factory;
+	
+	// the graph being operated upon
+	private Graph graph = new Graph();
+	private LinkedList<Node> selectedNodes = new LinkedList<>();
+	
+	// current drawing options
 	private int weight = 1;
 	private boolean areEdgesDirected = false;
-	private AlgorithmFactory factory;
+	
+	// the view
+	private GraphGui gui;
 	
 	public GraphController(){
 		this.factory = new AlgorithmFactory();
 	}
 	
 	public void setGUI(GraphGui gui){
-		this.gui = gui;
+		if (gui == null) this.gui = gui;
+		else throw new RuntimeException("This controller already belongs to a gui.");
 	}
-	
 	
 	public void buttonPress(String buttonName){
 
@@ -133,12 +91,12 @@ public class GraphController {
 			
 			case ASTAR:
 				Node selected = graph.getNode(click.getX(), click.getY());
-				int numSelected = selection.size();
+				int numSelected = selectedNodes.size();
 				if (selected == null || numSelected >= 2){
 					deselect();
 				}
 				else{
-					selection.add(selected);
+					selectedNodes.add(selected);
 				}
 				break;
 			}
@@ -158,11 +116,11 @@ public class GraphController {
 	 * Deselects everything.
 	 */
 	public void deselect() {
-		selection = new LinkedList<>();
+		selectedNodes = new LinkedList<>();
 	}
 	
 	public List<Node> getSelection(){
-		return this.selection;
+		return this.selectedNodes;
 	}
 	
 	
@@ -176,7 +134,7 @@ public class GraphController {
 	public void drawOnScreen(MouseEvent click){
 		
 		Node selected = graph.getNode(click.getX(), click.getY());
-		int numSelected = selection.size();
+		int numSelected = selectedNodes.size();
 		// clicked nothing
 		if (selected == null && numSelected > 0) {
 			deselect();
@@ -184,18 +142,18 @@ public class GraphController {
 		// selected two nodes: create an edge and deselect.
 		else if (numSelected == 1) {
 			// check if you clicked on an already-selected node
-			if (selection.get(0) == selected) {
-				selection.add(0,selected);
+			if (selectedNodes.get(0) == selected) {
+				selectedNodes.add(0,selected);
 			}
 			// otherwise add an edge between the two nodes.
 			else {
-				addEdge(selection.get(0), selected);
+				addEdge(selectedNodes.get(0), selected);
 				deselect();
 			}
 		}
 		// selected no nodes: highlight the cilcked node.
 		else if (numSelected == 0 && selected != null) {
-			selection.add(0,selected);
+			selectedNodes.add(0,selected);
 		}
 		// selected no nodes, clicked nothing: create a node at that
 		// spot.
@@ -234,7 +192,7 @@ public class GraphController {
 	private void createAlgorithm() {
 		if (gui == null) return;
 		try{
-			this.runningAlgorithm = factory.setupAlgorithm(modeAlgorithm,graph,selection);
+			this.runningAlgorithm = factory.setupAlgorithm(modeAlgorithm,graph,selectedNodes);
 		}
 		catch(SetupException se){
 			gui.createErrorDialog(se.getMessage());
