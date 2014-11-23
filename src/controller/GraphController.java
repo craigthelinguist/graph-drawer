@@ -94,20 +94,20 @@ public class GraphController {
 		
 		if (mode == Mode.ALGORITHMS){
 			
-			if (runningAlgorithm == null){
-				createAlgorithm();
-			}
-			else if (buttonName.equals("step")){
-				runningAlgorithm.nextIteration();
-				
-			}
-			else if (buttonName.equals("back")){
-				runningAlgorithm.previousIteration();
-			}
-			else if (buttonName.equals("run")){
-				runningAlgorithm.lastIteration();
-			}
-			
+			if (runningAlgorithm == null) createAlgorithm();
+			else{
+				switch buttonName{
+					case "step":
+						runningAlgorithm.nextIteration();
+						break;
+					case "back":
+						runningAlgorithm.previousIteration();
+						break;
+					case "run":
+						runningAlgorithm.lastIteration();
+						break;
+				}
+		
 		}
 		else if (mode == Mode.GRAPHING){
 
@@ -220,7 +220,6 @@ public class GraphController {
 	 * @param name: name of the new mode.
 	 */
 	public void changeMode(String name) {
-		System.out.println("changing mode to " + name);
 		if (gui == null) return;
 		this.mode = Mode.fromString(name);
 		if (mode == null) mode = Mode.GRAPHING;
@@ -230,12 +229,12 @@ public class GraphController {
 	}
 
 	/**
-	 * Creates an algorithm based on the value in the text field.
+	 * Instantiate the currently-selected algorithm.
 	 */
 	private void createAlgorithm() {
 		if (gui == null) return;
 		try{
-			this.runningAlgorithm = factory.setupAlgorithm(this.modeAlgorithm,this.graph,this.selection);
+			this.runningAlgorithm = factory.setupAlgorithm(modeAlgorithm,graph,selection);
 		}
 		catch(SetupException se){
 			gui.createErrorDialog(se.getMessage());
