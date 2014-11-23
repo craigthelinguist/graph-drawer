@@ -96,7 +96,7 @@ public class GraphController {
 			
 			if (runningAlgorithm == null) createAlgorithm();
 			else{
-				switch buttonName{
+				switch (buttonName){
 					case "step":
 						runningAlgorithm.nextIteration();
 						break;
@@ -107,7 +107,7 @@ public class GraphController {
 						runningAlgorithm.lastIteration();
 						break;
 				}
-		
+			}
 		}
 		else if (mode == Mode.GRAPHING){
 
@@ -276,7 +276,7 @@ public class GraphController {
 	 * @param y
 	 *            : y part of the point.
 	 */
-	public void addNode(int x, int y) {
+	private void addNode(int x, int y) {
 		graph.createNode(x - Node.RADIUS, y - Node.RADIUS);
 	}
 
@@ -288,7 +288,7 @@ public class GraphController {
 	 * @param n2
 	 *            : second node.
 	 */
-	public void addEdge(Node n1, Node n2) {
+	private void addEdge(Node n1, Node n2) {
 		graph.createEdge(n1, n2, areEdgesDirected, weight);
 	}
 
