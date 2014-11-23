@@ -2,7 +2,7 @@
 Graph Drawer
 ============
 
-A visual aide for various graphing algorithms.
+A visual learning aide for graphing algorithms!
 
 This program lets you draw a graph on the screen. You can select an algorithm, choose the inputs to the algorithm and then watch what it is doing iteration-by-iteration.
 
