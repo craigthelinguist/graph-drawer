@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.text.ParseException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -37,7 +38,7 @@ public class GraphingPane extends JPanel {
 	private Font INPUT_FONT = GuiConstants.INPUT_FONT;
 	
 	// components
-	private JTextField textfield;
+	private JFormattedTextField textfield;
 	private JCheckBox checkbox;
 	
 	// master
@@ -162,7 +163,18 @@ public class GraphingPane extends JPanel {
 	}
 	
 	protected int getWeight(){
-		return Integer.parseInt(this.textfield.getText());
+		try{
+			return Integer.parseInt(this.textfield.getText());
+		}
+		catch(NumberFormatException e){
+			try {
+				textfield.commitEdit();
+				return (int) textfield.getValue();
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+				return 0;
+			}
+		}
 	}
 	
 	protected boolean getDirected(){
