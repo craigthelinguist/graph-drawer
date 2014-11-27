@@ -56,6 +56,14 @@ public class GraphGui extends JFrame {
 		canvas.repaint();
 	}
 
+	public int getWeight(){
+		return sidebar.getWeight();
+	}
+	
+	public boolean getDirected(){
+		return sidebar.getDirected();
+	}
+	
 	public GraphCanvas getCanvas() {
 		return this.canvas;
 	}

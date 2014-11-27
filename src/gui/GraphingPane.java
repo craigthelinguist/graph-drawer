@@ -2,8 +2,11 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 
 import javax.swing.GroupLayout;
@@ -33,6 +36,9 @@ public class GraphingPane extends JPanel {
 	private Font LABEL_FONT = GuiConstants.LABEL_FONT;
 	private Font INPUT_FONT = GuiConstants.INPUT_FONT;
 	
+	// components
+	private JTextField textfield;
+	private JCheckBox checkbox;
 	
 	// master
 	private Sidebar master;
@@ -75,7 +81,7 @@ public class GraphingPane extends JPanel {
 		
 		// create components
 		JPanel panel = new JPanel();
-		final JCheckBox checkbox = new JCheckBox();
+		this.checkbox = new JCheckBox();
 		JLabel l_directed = new JLabel("Directed:");
 		l_directed.setFont(LABEL_FONT);
 		JLabel l_weight = new JLabel("Weight:");
@@ -85,7 +91,7 @@ public class GraphingPane extends JPanel {
 		NumberFormat format = NumberFormat.getInstance();
 		NumberFormatter formatter = new NumberFormatter(format);
 		formatter.setValueClass(Integer.class);
-		final JTextField textfield = new JFormattedTextField(formatter);
+		textfield = new JFormattedTextField(formatter);
 		textfield.setFont(INPUT_FONT);
 		textfield.setText("1");
 		textfield.setMinimumSize(new Dimension(10, 10));
@@ -108,22 +114,6 @@ public class GraphingPane extends JPanel {
 			.addComponent(l_directed).addComponent(checkbox));
 		vertical.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 			.addComponent(l_weight).addComponent(textfield));
-
-		// add action listeners
-		textfield.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				int w = Integer.parseInt(textfield.getText());
-				master.updateWeight(w);
-			}
-		});
-		checkbox.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent arg0){
-				boolean directed = checkbox.isSelected();
-				master.updateDirected(directed);
-			}
-		});
 		
 		return panel;
 		
@@ -154,9 +144,10 @@ public class GraphingPane extends JPanel {
 		horizontal.addComponent(b_clear);
 		horizontal.addComponent(b_save);
 		horizontal.addComponent(b_load);
-		vertical.addGroup(layout
-				.createParallelGroup(Alignment.CENTER).addComponent(b_clear)
-				.addComponent(b_save).addComponent(b_load));
+		vertical.addGroup(layout.createParallelGroup(Alignment.CENTER)
+			.addComponent(b_clear)
+			.addComponent(b_save)
+			.addComponent(b_load));
 
 		// add listeners
 		b_clear.addActionListener(new ActionListener(){
@@ -168,6 +159,14 @@ public class GraphingPane extends JPanel {
 		
 		return panel;
 			
+	}
+	
+	protected int getWeight(){
+		return Integer.parseInt(this.textfield.getText());
+	}
+	
+	protected boolean getDirected(){
+		return checkbox.isSelected();
 	}
 	
 	public static void main(String[] args) {

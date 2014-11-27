@@ -56,7 +56,6 @@ public class GraphCanvas extends JPanel {
 		}
 	}
 
-
 	private class CanvasListener implements MouseListener {
 
 		@Override

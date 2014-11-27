@@ -93,12 +93,12 @@ public class Sidebar extends JTabbedPane{
 		algorithmPane.clearText();
 	}
 
-	public void updateWeight(int weight) {
-		controller.updateWeight(weight);
+	protected int getWeight(){
+		return graphingPane.getWeight();
 	}
-
-	public void updateDirected(boolean directed) {
-		controller.updateDirectedEdges(directed);
+	
+	protected boolean getDirected(){
+		return graphingPane.getDirected();
 	}
 	
 	public int getWidth(){

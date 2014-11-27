@@ -30,10 +30,6 @@ public class GraphController {
 	private Graph graph = new Graph();
 	private LinkedList<Node> selectedNodes = new LinkedList<>();
 	
-	// current drawing options
-	private int weight = 1;
-	private boolean areEdgesDirected = false;
-	
 	// the view
 	private GraphGui gui = null;
 	
@@ -192,14 +188,6 @@ public class GraphController {
 	public boolean isRunningAlgorithm(){
 		return runningAlgorithm != null;
 	}
-	
-	public void updateWeight(int weight) {
-		this.weight = weight;
-	}
-
-	public void updateDirectedEdges(boolean directed){
-		this.areEdgesDirected = directed;
-	}
 
 	public Algorithm getAlgorithm() {
 		return runningAlgorithm;
@@ -232,7 +220,7 @@ public class GraphController {
 	 *            : second node.
 	 */
 	private void addEdge(Node n1, Node n2) {
-		graph.createEdge(n1, n2, areEdgesDirected, weight);
+		graph.createEdge(n1, n2, gui.getDirected(), gui.getWeight());
 	}
 
 
