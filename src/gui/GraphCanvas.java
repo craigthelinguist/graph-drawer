@@ -29,6 +29,9 @@ import algorithms.Algorithm;
  */
 public class GraphCanvas extends JPanel {
 
+
+	private static Color BABY_BLUE = new Color(227, 247, 255);
+	
 	private GraphGui gui;
 	private GraphController controller;
 	private CanvasListener mouseListener;
@@ -37,7 +40,7 @@ public class GraphCanvas extends JPanel {
 		this.gui = gui;
 		this.controller = controller;
 		setPreferredSize(new Dimension(600, 600));
-		setBackground(GraphGui.BABY_BLUE);
+		setBackground(BABY_BLUE);
 		mouseListener = new CanvasListener();
 		this.addMouseListener(mouseListener);
 	}

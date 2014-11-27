@@ -5,6 +5,7 @@ package gui;
 import controller.GraphController;
 import controller.Mode;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
@@ -24,12 +25,11 @@ import javax.swing.event.ChangeListener;
  */
 public class Sidebar extends JTabbedPane{
 
-	// gGraphGui constants
+	// graphical constants
 	public static final int WIDTH = 300;
 	public static final int HEIGHT = 600;
-	public static final Font LABEL_FONT = new Font("Century Gothic",Font.PLAIN,16);
-	public static final Font INPUT_FONT = new Font("Garamond",Font.PLAIN,13);
-
+	private static final Color BABY_BLUE = GuiConstants.BABY_BLUE;
+	
 	// components
 	private AlgorithmPane algorithmPane;
 	private GraphingPane graphingPane;
@@ -47,7 +47,7 @@ public class Sidebar extends JTabbedPane{
 		algorithmPane = new AlgorithmPane(this);
 		graphingPane = new GraphingPane(this);
 
-		this.setBackground(GraphGui.BABY_BLUE);
+		this.setBackground(BABY_BLUE);
 		addTab("Graphing", null, graphingPane, "Let's you draw a graph.");
 		setMnemonicAt(0, KeyEvent.VK_G);
 		addTab("Algorithms", null, algorithmPane, "Let's you select and run an algorithm.");
@@ -100,4 +100,13 @@ public class Sidebar extends JTabbedPane{
 	public void updateDirected(boolean directed) {
 		controller.updateDirectedEdges(directed);
 	}
+	
+	public int getWidth(){
+		return WIDTH;
+	}
+	
+	public int getHeight(){
+		return HEIGHT;
+	}
+	
 }

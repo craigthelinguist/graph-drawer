@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
@@ -27,6 +28,10 @@ import javax.swing.text.NumberFormatter;
  */
 public class GraphingPane extends JPanel {
 
+	// graphical constants
+	private Font LABEL_FONT = GuiConstants.LABEL_FONT;
+	private Font INPUT_FONT = GuiConstants.INPUT_FONT;
+	
 	private JCheckBox chk_directed;
 	private JLabel label_directed;
 	private JLabel label_weight;
@@ -42,15 +47,15 @@ public class GraphingPane extends JPanel {
 
 		chk_directed = new JCheckBox();
 		label_directed = new JLabel("Directed:");
-		label_directed.setFont(Sidebar.LABEL_FONT);
+		label_directed.setFont(LABEL_FONT);
 		label_weight = new JLabel("Weight:");
-		label_weight.setFont(Sidebar.LABEL_FONT);
+		label_weight.setFont(LABEL_FONT);
 
 		NumberFormat format = NumberFormat.getInstance();
 		NumberFormatter formatter = new NumberFormatter(format);
 		formatter.setValueClass(Integer.class);
 		field_weight = new JFormattedTextField(formatter);
-		field_weight.setFont(Sidebar.INPUT_FONT);
+		field_weight.setFont(INPUT_FONT);
 		field_weight.setText("1");
 		field_weight.setMinimumSize(new Dimension(10, 10));
 

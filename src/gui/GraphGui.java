@@ -28,9 +28,6 @@ import algorithms.Kruskals;
  * @author craigthelinguist
  */
 public class GraphGui extends JFrame {
-
-
-	public static Color BABY_BLUE = new Color(227, 247, 255);
 	
 	// gui components
 	private GraphCanvas canvas;
