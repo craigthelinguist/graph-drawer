@@ -35,14 +35,14 @@ public class GraphController {
 	private boolean areEdgesDirected = false;
 	
 	// the view
-	private GraphGui gui;
+	private GraphGui gui = null;
 	
 	public GraphController(){
 		this.factory = new AlgorithmFactory();
 	}
 	
 	public void setGUI(GraphGui gui){
-		if (gui == null) this.gui = gui;
+		if (this.gui == null) this.gui = gui;
 		else throw new RuntimeException("This controller already belongs to a gui.");
 	}
 	
@@ -83,7 +83,7 @@ public class GraphController {
 	 */
 	public void mousePressed(MouseEvent click) {
 		Mode mode = getMode();
-		if (mode == Mode.GRAPHING) drawOnScreen(click);
+		if (mode == Mode.GRAPHING) drawOnScreen(click.getX(),click.getY());
 		// need to select inputs
 		else if (mode == Mode.ALGORITHMS && !isRunningAlgorithm()){
 			switch (modeAlgorithm){
@@ -120,44 +120,34 @@ public class GraphController {
 		return this.selectedNodes;
 	}
 	
-	
-	
-	
-
 	/**
-	 * User has drawn something on the screen.
-	 * @param click
+	 * Respond to an event where something was drawn on the screen.
+	 * @param (x,y): point on the screen where the event happened.
 	 */
-	public void drawOnScreen(MouseEvent click){
-		
-		Node selected = graph.getNode(click.getX(), click.getY());
+	public void drawOnScreen(int x, int y){
+		Node selected = graph.getNode(x,y);
 		int numSelected = selectedNodes.size();
+		
 		// clicked nothing
 		if (selected == null && numSelected > 0) {
 			deselect();
 		}
-		// selected two nodes: create an edge and deselect.
+		
+		// selected two nodes: create an edge if they're two different nodes
 		else if (numSelected == 1) {
-			// check if you clicked on an already-selected node
-			if (selectedNodes.get(0) == selected) {
-				selectedNodes.add(0,selected);
-			}
-			// otherwise add an edge between the two nodes.
-			else {
-				addEdge(selectedNodes.get(0), selected);
-				deselect();
-			}
+			if (selectedNodes.get(0) != selected) addEdge(selectedNodes.get(0), selected);
+			deselect();
 		}
+		
 		// selected no nodes: highlight the cilcked node.
 		else if (numSelected == 0 && selected != null) {
 			selectedNodes.add(0,selected);
 		}
-		// selected no nodes, clicked nothing: create a node at that
-		// spot.
+		
+		// selected no nodes, clicked nothing: create a node at that spot
 		else if (numSelected == 0 && selected == null) {
-			addNode(click.getX(), click.getY());
+			addNode(x,y);
 		}
-
 	}
 	
 	/**
