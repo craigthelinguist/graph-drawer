@@ -47,7 +47,7 @@ public class GraphCanvas extends JPanel {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		drawGraph(g);
-		if (controller.getMode() == Mode.GRAPHING || !controller.runningAlgorithm()) {
+		if (controller.getMode() == Mode.GRAPHING || !controller.isRunningAlgorithm()) {
 			outlineSelection(g);
 		}
 	}

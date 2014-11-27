@@ -46,12 +46,13 @@ public class GraphController {
 		else throw new RuntimeException("This controller already belongs to a gui.");
 	}
 	
+	/**
+	 * Respond to a button event.
+	 * @param buttonName: name of the button that was pressed.
+	 */
 	public void buttonPress(String buttonName){
-
 		if (gui == null) return;
-		
 		if (mode == Mode.ALGORITHMS){
-			
 			if (runningAlgorithm == null) createAlgorithm();
 			else{
 				switch (buttonName){
@@ -68,45 +69,41 @@ public class GraphController {
 			}
 		}
 		else if (mode == Mode.GRAPHING){
-
-			if (buttonName.equals("clear")){
-				graph = new Graph();
-			}
-				
+			switch (buttonName){
+				case "clear":
+					graph = new Graph();
+			}	
 		}
-
 		gui.repaint();
-		
 	}
 	
+	/**
+	 * Respond to a mouse event.
+	 * @param click: the mouse event.
+	 */
 	public void mousePressed(MouseEvent click) {
-		
 		Mode mode = getMode();
 		if (mode == Mode.GRAPHING) drawOnScreen(click);
-		
 		// need to select inputs
-		else if (mode == Mode.ALGORITHMS && !runningAlgorithm()){
-			
+		else if (mode == Mode.ALGORITHMS && !isRunningAlgorithm()){
 			switch (modeAlgorithm){
-			
-			case ASTAR:
-				Node selected = graph.getNode(click.getX(), click.getY());
-				int numSelected = selectedNodes.size();
-				if (selected == null || numSelected >= 2){
-					deselect();
+				case ASTAR:
+					Node selected = graph.getNode(click.getX(), click.getY());
+					int numSelected = selectedNodes.size();
+					if (selected == null || numSelected >= 2){
+						deselect();
+					}	
+					else{
+						selectedNodes.add(selected);
+					}
+					break;
+				case KRUSKALS:
+					break;
+				default:
+					break;
 				}
-				else{
-					selectedNodes.add(selected);
-				}
-				break;
-			}
-			
 		}
-		
-		// clicking during algorithm execution
-		else{}
-		
-		
+		else{}		// clicking during algorithm execution
 		gui.repaint();
 	}
 	
@@ -202,11 +199,10 @@ public class GraphController {
 	}
 
 
-	public boolean runningAlgorithm(){
+	public boolean isRunningAlgorithm(){
 		return runningAlgorithm != null;
 	}
 	
-
 	public void updateWeight(int weight) {
 		this.weight = weight;
 	}
@@ -214,7 +210,6 @@ public class GraphController {
 	public void updateDirectedEdges(boolean directed){
 		this.areEdgesDirected = directed;
 	}
-
 
 	public Algorithm getAlgorithm() {
 		return runningAlgorithm;
