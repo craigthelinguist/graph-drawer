@@ -29,9 +29,10 @@ import algorithms.Algorithm;
  */
 public class GraphCanvas extends JPanel {
 
-
+	// graphical constants
 	private static Color BABY_BLUE = new Color(227, 247, 255);
 	
+	// gui components
 	private GraphGui gui;
 	private GraphController controller;
 	private CanvasListener mouseListener;

@@ -14,6 +14,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.NumberFormatter;
@@ -32,146 +33,143 @@ public class GraphingPane extends JPanel {
 	private Font LABEL_FONT = GuiConstants.LABEL_FONT;
 	private Font INPUT_FONT = GuiConstants.INPUT_FONT;
 	
-	private JCheckBox chk_directed;
-	private JLabel label_directed;
-	private JLabel label_weight;
-	private JFormattedTextField field_weight;
-	private JButton btn_clear;
-	private JButton btn_save;
-	private JButton btn_load;
-	private Sidebar sidebar;
+	
+	// master
+	private Sidebar master;
 
 	public GraphingPane(Sidebar masterPanel) {
-		sidebar = masterPanel;
+
+		// set up fields
+		master = masterPanel;
+
+		// create components
+		JPanel panel_tophalf = setupTopHalf();
+		JPanel panel_bothalf = setupBottomHalf();
+		
+		// create layout
 		setPreferredSize(new Dimension(Sidebar.WIDTH, Sidebar.HEIGHT));
+		GroupLayout layout = new GroupLayout(this);
+		this.setLayout(layout);
+		GroupLayout.SequentialGroup horizontal = layout.createSequentialGroup();
+		GroupLayout.SequentialGroup vertical = layout.createSequentialGroup();
+		layout.setHorizontalGroup(horizontal);
+		layout.setVerticalGroup(vertical);
+		layout.setAutoCreateContainerGaps(true);
+		layout.setAutoCreateGaps(true);
+		
+		// add components to layout
+		horizontal.addGroup(layout.createParallelGroup(Alignment.CENTER)
+			.addComponent(panel_tophalf)
+			.addComponent(panel_bothalf));
+		vertical.addComponent(panel_tophalf);
+		vertical.addComponent(panel_bothalf);
+		
+	}
 
-		chk_directed = new JCheckBox();
-		label_directed = new JLabel("Directed:");
-		label_directed.setFont(LABEL_FONT);
-		label_weight = new JLabel("Weight:");
-		label_weight.setFont(LABEL_FONT);
+	/**
+	 * Create and return a JPanel. The panel contains a checkbox for whether edges should be directed
+	 * or not, and a textfield to specify the weight of the edges.
+	 * @return JPanel
+	 */
+	private JPanel setupTopHalf(){
+		
+		// create components
+		JPanel panel = new JPanel();
+		final JCheckBox checkbox = new JCheckBox();
+		JLabel l_directed = new JLabel("Directed:");
+		l_directed.setFont(LABEL_FONT);
+		JLabel l_weight = new JLabel("Weight:");
+		l_weight.setFont(LABEL_FONT);
 
+		// create custom formatter for the CheckBox
 		NumberFormat format = NumberFormat.getInstance();
 		NumberFormatter formatter = new NumberFormatter(format);
 		formatter.setValueClass(Integer.class);
-		field_weight = new JFormattedTextField(formatter);
-		field_weight.setFont(INPUT_FONT);
-		field_weight.setText("1");
-		field_weight.setMinimumSize(new Dimension(10, 10));
-
-		btn_clear = new JButton("Clear");
-		btn_save = new JButton("Save");
-		btn_load = new JButton("Load");
-
-		/** TOP HALF **/
-		// setup Grouplayout for top half
-		JPanel topHalf = new JPanel();
-		GroupLayout layout = new GroupLayout(topHalf);
-		topHalf.setLayout(layout);
+		final JTextField textfield = new JFormattedTextField(formatter);
+		textfield.setFont(INPUT_FONT);
+		textfield.setText("1");
+		textfield.setMinimumSize(new Dimension(10, 10));
+		
+		// create layout
+		GroupLayout layout = new GroupLayout(panel);
+		panel.setLayout(layout);
 		GroupLayout.SequentialGroup horizontal = layout.createSequentialGroup();
 		GroupLayout.SequentialGroup vertical = layout.createSequentialGroup();
 		layout.setHorizontalGroup(horizontal);
 		layout.setVerticalGroup(vertical);
 		layout.setAutoCreateGaps(true);
-		// layout.setAutoCreateContainerGaps(true);
 
-		// columns, left-to-right
+		// add components to layout
 		horizontal.addGroup(layout.createParallelGroup()
-				.addComponent(label_directed).addComponent(label_weight));
+			.addComponent(l_directed).addComponent(l_weight));
 		horizontal.addGroup(layout.createParallelGroup()
-				.addComponent(chk_directed).addComponent(field_weight));
+			.addComponent(checkbox).addComponent(textfield));
+		vertical.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			.addComponent(l_directed).addComponent(checkbox));
+		vertical.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			.addComponent(l_weight).addComponent(textfield));
 
-		// rows, top-to-bottom
-		vertical.addGroup(layout
-				.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(label_directed).addComponent(chk_directed));
-		vertical.addGroup(layout
-				.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addComponent(label_weight).addComponent(field_weight));
-
-		/** BOTTOM HALF **/
-		JPanel bottomHalf = new JPanel();
-		GroupLayout bottomLayout = new GroupLayout(bottomHalf);
-		bottomHalf.setLayout(bottomLayout);
-		GroupLayout.SequentialGroup bottom_horizontal = bottomLayout
-				.createSequentialGroup();
-		GroupLayout.SequentialGroup bottom_vertical = bottomLayout
-				.createSequentialGroup();
-		bottomLayout.setHorizontalGroup(bottom_horizontal);
-		bottomLayout.setVerticalGroup(bottom_vertical);
-		bottomLayout.setAutoCreateGaps(true);
-
-		// cols for panel
-		bottom_horizontal.addComponent(btn_clear);
-		bottom_horizontal.addComponent(btn_save);
-		bottom_horizontal.addComponent(btn_load);
-
-		// rows for panel
-		bottom_vertical.addGroup(bottomLayout
-				.createParallelGroup(Alignment.CENTER).addComponent(btn_clear)
-				.addComponent(btn_save).addComponent(btn_load));
-
-		/** ENTIRE PANE **/
-		// Grouplayout for GraphingPane
-		GroupLayout paneLayout = new GroupLayout(this);
-		this.setLayout(paneLayout);
-		GroupLayout.SequentialGroup pane_horizontal = paneLayout
-				.createSequentialGroup();
-		GroupLayout.SequentialGroup pane_vertical = paneLayout
-				.createSequentialGroup();
-		paneLayout.setHorizontalGroup(pane_horizontal);
-		paneLayout.setVerticalGroup(pane_vertical);
-		paneLayout.setAutoCreateContainerGaps(true);
-		paneLayout.setAutoCreateGaps(true);
-		pane_horizontal.addGroup(paneLayout
-				.createParallelGroup(Alignment.CENTER).addComponent(topHalf)
-				.addComponent(bottomHalf));
-
-		pane_vertical.addComponent(topHalf);
-		pane_vertical.addComponent(bottomHalf);
-
-		addListeners();
-		
-	}
-
-	private void addListeners(){
-		
-		btn_clear.addActionListener(new ActionListener(){
-
+		// add action listeners
+		textfield.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				sidebar.sendButtonPress("clear");
+				int w = Integer.parseInt(textfield.getText());
+				master.updateWeight(w);
 			}
-			
 		});
-		
-		field_weight.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				int w = Integer.parseInt(field_weight.getText());
-				sidebar.updateWeight(w);
-			}
-			
-		});
-		
-		
-		chk_directed.addActionListener(new ActionListener(){
-			
+		checkbox.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0){
-				boolean directed = chk_directed.isSelected();
-				sidebar.updateDirected(directed);
+				boolean directed = checkbox.isSelected();
+				master.updateDirected(directed);
 			}
-			
 		});
+		
+		return panel;
 		
 	}
 	
-	public String toString() {
-		return "graphing";
-	}
+	/**
+	 * Create and return a JPanel. The panel contains buttons for saving and loading graphs.
+	 * @return JPanel
+	 */
+	private JPanel setupBottomHalf(){
 
+		// create components
+		JPanel panel = new JPanel();
+		JButton b_clear = new JButton("Clear");
+		JButton b_save = new JButton("Save");
+		JButton b_load = new JButton("Load");
+		
+		// create layout
+		GroupLayout layout = new GroupLayout(panel);
+		panel.setLayout(layout);
+		GroupLayout.SequentialGroup horizontal = layout.createSequentialGroup();
+		GroupLayout.SequentialGroup vertical = layout.createSequentialGroup();
+		layout.setHorizontalGroup(horizontal);
+		layout.setVerticalGroup(vertical);
+		layout.setAutoCreateGaps(true);
+		
+		// add components to layout
+		horizontal.addComponent(b_clear);
+		horizontal.addComponent(b_save);
+		horizontal.addComponent(b_load);
+		vertical.addGroup(layout
+				.createParallelGroup(Alignment.CENTER).addComponent(b_clear)
+				.addComponent(b_save).addComponent(b_load));
+
+		// add listeners
+		b_clear.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				master.sendButtonPress("clear");
+			}
+		});
+		
+		return panel;
+			
+	}
+	
 	public static void main(String[] args) {
 
 		JFrame frame = new JFrame("GraphingPane");
